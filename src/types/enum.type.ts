@@ -1,4 +1,5 @@
 // src/types/enum.type.ts
+
 export enum Role {
   ADMIN,
   INSTRUCTOR,

@@ -3,6 +3,7 @@ export * from "./auditLog.type";
 export * from "./auth.type";
 export * from "./certificate.type";
 export * from "./common.type";
+export * from "./constant.type";
 export * from "./course.type";
 export * from "./discussion.type";
 export * from "./enum.type";
