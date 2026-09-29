@@ -7,6 +7,20 @@ import type {
   UserStatus,
 } from "./enum.type";
 
+export interface Meta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  message: string;
+  data: T;
+  meta?: Meta;
+}
+
 export interface IQuery {
   searchTerm?: string;
   page?: string;
