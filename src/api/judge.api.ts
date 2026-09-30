@@ -35,10 +35,7 @@ export function createCodingLesson(payload: ICodingLessonCreatePayload) {
   });
 }
 
-export function updateTestCases(
-  id: string,
-  payload: IUpdateTestCasesPayload,
-) {
+export function updateTestCases(id: string, payload: IUpdateTestCasesPayload) {
   return apiClient<ApiResponse>(`/api/v1/judge/lessons/${id}/test-cases`, {
     method: "PATCH",
     body: payload,

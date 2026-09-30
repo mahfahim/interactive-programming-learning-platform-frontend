@@ -13,9 +13,7 @@ export function createSuperModule(payload: ICreateSuperModuleInput) {
 }
 
 export function getSuperModulesByCourse(courseId: string) {
-  return apiClient<ApiResponse>(
-    `/api/v1/super-modules/course/${courseId}`,
-  );
+  return apiClient<ApiResponse>(`/api/v1/super-modules/course/${courseId}`);
 }
 
 export function getSuperModuleById(id: string) {

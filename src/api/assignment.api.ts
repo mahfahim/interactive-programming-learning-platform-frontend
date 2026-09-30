@@ -14,9 +14,7 @@ export function createAssignment(payload: IAssignmentCreatePayload) {
 }
 
 export function getAssignmentByLessonId(lessonId: string) {
-  return apiClient<ApiResponse>(
-    `/api/v1/assignments/lessons/${lessonId}`,
-  );
+  return apiClient<ApiResponse>(`/api/v1/assignments/lessons/${lessonId}`);
 }
 
 export function getAssignmentById(id: string) {
@@ -63,9 +61,7 @@ export function getMySubmission(assignmentId: string) {
 }
 
 export function getassignmentsubmissions(id: string) {
-  return apiClient<ApiResponse>(
-    `/api/v1/assignments/${id}/submissions`,
-  );
+  return apiClient<ApiResponse>(`/api/v1/assignments/${id}/submissions`);
 }
 
 export function gradeSubmission(
