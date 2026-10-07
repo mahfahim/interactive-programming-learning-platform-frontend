@@ -1,4 +1,5 @@
 // src/types/auth.type.ts
+
 export interface IRegisterPayload {
   name: string;
   email: string;

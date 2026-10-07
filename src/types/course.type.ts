@@ -1,5 +1,40 @@
 // src/types/course.type.ts
 import type { CourseLevel, Language } from "./enum.type";
+import type { ISuperModule } from "./superModule.type";
+
+export interface IPrerequisite extends ICreatePrerequisiteInput {
+  id?: string;
+  courseDescriptionId?: string;
+}
+
+export interface ILearningOutcome extends ICreateLearningOutcomeInput {
+  id?: string;
+  courseDescriptionId?: string;
+}
+
+export interface ICourseDescription {
+  courseId?: string;
+  shortDescription: string;
+  fullDescription: string;
+  level: CourseLevel;
+  language: Language;
+  learningOutcomes: ILearningOutcome[];
+  prerequisites: IPrerequisite[];
+}
+
+export interface ICourse {
+  id: string;
+  title: string;
+  slug: string;
+  coverImageUrl?: string | null;
+  price: string | number;
+  enrollmentCount: number;
+  createdAt: string;
+  updatedAt: string;
+  instructorId?: string | null;
+  description?: ICourseDescription | null;
+  superModules?: ISuperModule[];
+}
 
 export interface ICreateLearningOutcomeInput {
   outcomeText: string;

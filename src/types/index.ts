@@ -1,3 +1,4 @@
+export * from "./analytics.type";
 export * from "./assignment.type";
 export * from "./auditLog.type";
 export * from "./auth.type";

@@ -9,3 +9,12 @@ export interface IUpdateModuleInput {
   title?: string;
   displayOrder?: number;
 }
+
+export interface IModule {
+  id: string;
+  superModuleId: string;
+  title: string;
+  description?: string | null;
+  displayOrder: number;
+  lessons?: unknown[];
+}
