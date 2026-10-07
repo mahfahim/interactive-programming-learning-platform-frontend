@@ -1,6 +1,6 @@
 import { type UseQueryOptions, useQuery } from "@tanstack/react-query";
 import { getAdminOverviewStats } from "@/api/analytics.api";
-import type { ApiResponse } from "@/types";
+import type { AdminOverviewResponse } from "@/types/analytics.type";
 
 export const analyticsKeys = {
   all: ["analytics"] as const,
@@ -8,7 +8,7 @@ export const analyticsKeys = {
 };
 
 type UseAdminOverviewStatsOptions = Omit<
-  UseQueryOptions<ApiResponse, Error>,
+  UseQueryOptions<AdminOverviewResponse, Error>,
   "queryKey" | "queryFn"
 >;
 

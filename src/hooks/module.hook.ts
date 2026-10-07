@@ -17,6 +17,7 @@ import type {
   ICreateModuleInput,
   IUpdateModuleInput,
 } from "@/types";
+import { superModuleKeys } from "./superModule.hook";
 
 // Query Keys Factory
 export const moduleKeys = {
@@ -91,42 +92,49 @@ export function useGetModuleById(
 // Create a new module
 export function useCreateModule(options?: UseCreateModuleOptions) {
   const queryClient = useQueryClient();
+  const { onSuccess, ...restOptions } = options || {};
 
   return useMutation({
     mutationFn: createModule,
     onSuccess: (...args) => {
+      // Invalidate modules and super modules queries
       queryClient.invalidateQueries({ queryKey: moduleKeys.all });
-      options?.onSuccess?.(...args);
+      queryClient.invalidateQueries({ queryKey: superModuleKeys.all });
+      onSuccess?.(...args);
     },
-    ...options,
+    ...restOptions,
   });
 }
 
 // Update an existing module by ID
 export function useUpdateModule(options?: UseUpdateModuleOptions) {
   const queryClient = useQueryClient();
+  const { onSuccess, ...restOptions } = options || {};
 
   return useMutation({
     mutationFn: ({ id, payload }: UpdateModuleVariables) =>
       updateModule(id, payload),
     onSuccess: (...args) => {
       queryClient.invalidateQueries({ queryKey: moduleKeys.all });
-      options?.onSuccess?.(...args);
+      queryClient.invalidateQueries({ queryKey: superModuleKeys.all });
+      onSuccess?.(...args);
     },
-    ...options,
+    ...restOptions,
   });
 }
 
 // Delete a module by ID
 export function useDeleteModule(options?: UseDeleteModuleOptions) {
   const queryClient = useQueryClient();
+  const { onSuccess, ...restOptions } = options || {};
 
   return useMutation({
     mutationFn: (id: string) => deleteModule(id),
     onSuccess: (...args) => {
       queryClient.invalidateQueries({ queryKey: moduleKeys.all });
-      options?.onSuccess?.(...args);
+      queryClient.invalidateQueries({ queryKey: superModuleKeys.all });
+      onSuccess?.(...args);
     },
-    ...options,
+    ...restOptions,
   });
 }

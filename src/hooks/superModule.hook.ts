@@ -60,7 +60,6 @@ type UseDeleteSuperModuleOptions = Omit<
 
 // Hooks - Queries
 
-// Fetch all super modules belonging to a specific course
 export function useGetSuperModulesByCourse(
   courseId: string,
   options?: UseGetSuperModulesByCourseOptions,
@@ -73,7 +72,6 @@ export function useGetSuperModulesByCourse(
   });
 }
 
-// Fetch details of a single super module by ID
 export function useGetSuperModuleById(
   id: string,
   options?: UseGetSuperModuleByIdOptions,
@@ -91,42 +89,48 @@ export function useGetSuperModuleById(
 // Create a new super module
 export function useCreateSuperModule(options?: UseCreateSuperModuleOptions) {
   const queryClient = useQueryClient();
+  const { onSuccess, ...restOptions } = options || {};
 
   return useMutation({
     mutationFn: createSuperModule,
     onSuccess: (...args) => {
+      // Refresh all super module queries
       queryClient.invalidateQueries({ queryKey: superModuleKeys.all });
-      options?.onSuccess?.(...args);
+      onSuccess?.(...args);
     },
-    ...options,
+    ...restOptions,
   });
 }
 
 // Update an existing super module by ID
 export function useUpdateSuperModule(options?: UseUpdateSuperModuleOptions) {
   const queryClient = useQueryClient();
+  const { onSuccess, ...restOptions } = options || {};
 
   return useMutation({
     mutationFn: ({ id, payload }: UpdateSuperModuleVariables) =>
       updateSuperModule(id, payload),
     onSuccess: (...args) => {
+      // Refresh all super module queries
       queryClient.invalidateQueries({ queryKey: superModuleKeys.all });
-      options?.onSuccess?.(...args);
+      onSuccess?.(...args);
     },
-    ...options,
+    ...restOptions,
   });
 }
 
 // Delete a super module by ID
 export function useDeleteSuperModule(options?: UseDeleteSuperModuleOptions) {
   const queryClient = useQueryClient();
+  const { onSuccess, ...restOptions } = options || {};
 
   return useMutation({
     mutationFn: (id: string) => deleteSuperModule(id),
     onSuccess: (...args) => {
+      // Refresh all super module queries
       queryClient.invalidateQueries({ queryKey: superModuleKeys.all });
-      options?.onSuccess?.(...args);
+      onSuccess?.(...args);
     },
-    ...options,
+    ...restOptions,
   });
 }

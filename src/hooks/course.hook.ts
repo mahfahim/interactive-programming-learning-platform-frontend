@@ -31,7 +31,6 @@ export const courseKeys = {
   detail: (id: string) => [...courseKeys.details(), id] as const,
 };
 
-// Types
 type UpdateCourseVariables = {
   id: string;
   payload: IUpdateCourseInput;
@@ -53,23 +52,21 @@ type UseGetCourseByIdOptions = Omit<
 >;
 
 type UseCreateCourseOptions = Omit<
-  UseMutationOptions<ApiResponse, Error, ICreateCourseInput>,
+  UseMutationOptions<ApiResponse, Error, ICreateCourseInput, unknown>,
   "mutationFn"
 >;
 
 type UseUpdateCourseOptions = Omit<
-  UseMutationOptions<ApiResponse, Error, UpdateCourseVariables>,
+  UseMutationOptions<ApiResponse, Error, UpdateCourseVariables, unknown>,
   "mutationFn"
 >;
 
 type UseDeleteCourseOptions = Omit<
-  UseMutationOptions<ApiResponse, Error, string>,
+  UseMutationOptions<ApiResponse, Error, string, unknown>,
   "mutationFn"
 >;
 
-// Hooks
-
-// Fetch a list of courses with optional filter parameters
+// Fetch a list of courses
 export function useGetCourses(
   params?: ICourseQueryParams,
   options?: UseGetCoursesOptions,
@@ -90,7 +87,7 @@ export function useGetMyCourses(options?: UseGetMyCoursesOptions) {
   });
 }
 
-// Fetch a single course by its ID
+// Fetch a single course by ID
 export function useGetCourseById(
   id: string,
   options?: UseGetCourseByIdOptions,
@@ -108,12 +105,14 @@ export function useCreateCourse(options?: UseCreateCourseOptions) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: createCourse,
-    onSuccess: (...args) => {
-      queryClient.invalidateQueries({ queryKey: courseKeys.all });
-      options?.onSuccess?.(...args);
-    },
     ...options,
+    mutationFn: createCourse,
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: courseKeys.all });
+      if (options?.onSuccess) {
+        (options.onSuccess as any)(data, variables, context);
+      }
+    },
   });
 }
 
@@ -122,13 +121,18 @@ export function useUpdateCourse(options?: UseUpdateCourseOptions) {
   const queryClient = useQueryClient();
 
   return useMutation({
+    ...options,
     mutationFn: ({ id, payload }: UpdateCourseVariables) =>
       updateCourse(id, payload),
-    onSuccess: (...args) => {
+    onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: courseKeys.all });
-      options?.onSuccess?.(...args);
+      queryClient.invalidateQueries({
+        queryKey: courseKeys.detail(variables.id),
+      });
+      if (options?.onSuccess) {
+        (options.onSuccess as any)(data, variables, context);
+      }
     },
-    ...options,
   });
 }
 
@@ -137,11 +141,13 @@ export function useDeleteCourse(options?: UseDeleteCourseOptions) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => deleteCourse(id),
-    onSuccess: (...args) => {
-      queryClient.invalidateQueries({ queryKey: courseKeys.all });
-      options?.onSuccess?.(...args);
-    },
     ...options,
+    mutationFn: (id: string) => deleteCourse(id),
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: courseKeys.all });
+      if (options?.onSuccess) {
+        (options.onSuccess as any)(data, variables, context);
+      }
+    },
   });
 }
