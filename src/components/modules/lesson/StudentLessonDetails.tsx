@@ -72,6 +72,16 @@ export function StudentLessonDetails({ lessonId }: { lessonId: string }) {
     );
   }
 
+  // Type-assert lesson.coding to safely map to CodingDataDetails
+  const rawCoding = lesson.coding as unknown as (CodingDataDetails & { id?: string });
+
+  const codingData: CodingDataDetails | null = rawCoding
+    ? {
+        ...rawCoding,
+        id: String(rawCoding.id || ""),
+      }
+    : null;
+
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-12">
       {/* Top Navigation Header */}
@@ -117,7 +127,7 @@ export function StudentLessonDetails({ lessonId }: { lessonId: string }) {
           )}
 
           {lesson.lessonType === LessonType.CODING && (
-            <CodingLesson codingData={lesson.coding as CodingDataDetails} />
+            <CodingLesson codingData={codingData} />
           )}
 
           {lesson.lessonType === LessonType.QUIZ && (
