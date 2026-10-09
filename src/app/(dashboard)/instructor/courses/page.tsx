@@ -8,6 +8,9 @@ export const metadata = {
 
 export default function InstructorCoursesPage() {
   return (
-    <AdminCourseManagement role={Role.INSTRUCTOR} urlPrefix="/instructor/courses" />
+    <AdminCourseManagement
+      role={Role.INSTRUCTOR}
+      urlPrefix="/instructor/courses"
+    />
   );
 }

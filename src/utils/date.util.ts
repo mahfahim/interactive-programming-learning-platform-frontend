@@ -1,4 +1,3 @@
-
 export function formatDate(
   date?: string | Date | null,
   fallback: string = "N/A",
@@ -23,7 +22,6 @@ export function formatDate(
   }
 }
 
-
 export function formatDateTime(
   date?: string | Date | null,
   fallback: string = "N/A",
@@ -36,7 +34,6 @@ export function formatDateTime(
     minute: "numeric",
   });
 }
-
 
 export function toISODateInput(date?: string | Date | null): string {
   if (!date) return "";

@@ -2,7 +2,7 @@
 
 "use client";
 
-import { AuditLogsTable } from "@/components/modules/auditLog/AuditLogTable"; 
+import { AuditLogsTable } from "@/components/modules/auditLog/AuditLogTable";
 
 export default function AnalyticsPage() {
   return (

@@ -9,7 +9,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { EnrollmentModal } from "@/components/modules/enrollment/EnrollmentModal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

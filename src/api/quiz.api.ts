@@ -1,9 +1,5 @@
 import apiClient from "@/lib/apiClient";
-import type {
-  ApiResponse,
-  ISubmitQuizPayload,
-} from "@/types";
-
+import type { ApiResponse, ISubmitQuizPayload } from "@/types";
 
 export function getQuizByLessonId(lessonId: string) {
   return apiClient<ApiResponse>(`/api/v1/quizzes/lessons/${lessonId}`);
@@ -31,7 +27,6 @@ export function getQuizAttempts(id: string) {
 export function getQuizById(id: string) {
   return apiClient<ApiResponse>(`/api/v1/quizzes/${id}`);
 }
-
 
 export function deleteQuiz(id: string) {
   return apiClient<ApiResponse>(`/api/v1/quizzes/${id}`, {

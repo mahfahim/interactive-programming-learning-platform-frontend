@@ -14,10 +14,7 @@ export default async function SuperModuleDetailsPage({ params }: PageProps) {
 
   return (
     <div className="container mx-auto py-6">
-      <AdminModuleList
-        superModuleId={superModuleId}
-        courseId={courseId}
-      />
+      <AdminModuleList superModuleId={superModuleId} courseId={courseId} />
     </div>
   );
 }

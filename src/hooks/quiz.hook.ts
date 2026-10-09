@@ -14,10 +14,7 @@ import {
   getQuizByLessonId,
   submitQuiz,
 } from "@/api/quiz.api";
-import type {
-  ApiResponse,
-  ISubmitQuizPayload,
-} from "@/types";
+import type { ApiResponse, ISubmitQuizPayload } from "@/types";
 
 // Query Keys Factory
 export const quizKeys = {
@@ -33,8 +30,6 @@ export const quizKeys = {
     [...quizKeys.attempts(), "my", quizLessonId] as const,
   quizAttempts: (id: string) => [...quizKeys.attempts(), "quiz", id] as const,
 };
-
-
 
 type UseGetQuizByLessonIdOptions = Omit<
   UseQueryOptions<ApiResponse>,
@@ -61,14 +56,10 @@ type UseGetQuizByIdOptions = Omit<
   "queryKey" | "queryFn"
 >;
 
-
-
 type UseSubmitQuizOptions = Omit<
   UseMutationOptions<ApiResponse, Error, ISubmitQuizPayload>,
   "mutationFn"
 >;
-
-
 
 type UseDeleteQuizOptions = Omit<
   UseMutationOptions<ApiResponse, Error, string>,
@@ -154,8 +145,6 @@ export function useSubmitQuiz(options?: UseSubmitQuizOptions) {
     ...options,
   });
 }
-
-
 
 // Delete a quiz by ID
 export function useDeleteQuiz(options?: UseDeleteQuizOptions) {
