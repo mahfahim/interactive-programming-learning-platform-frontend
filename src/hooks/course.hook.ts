@@ -79,10 +79,13 @@ export function useGetCourses(
 }
 
 // Fetch current user's courses
-export function useGetMyCourses(options?: UseGetMyCoursesOptions) {
+export function useGetMyCourses(
+  params?: ICourseQueryParams,
+  options?: UseGetMyCoursesOptions,
+) {
   return useQuery({
-    queryKey: courseKeys.myCourses(),
-    queryFn: getMyCourses,
+    queryKey: [...courseKeys.myCourses(), params],
+    queryFn: () => getMyCourses(params),
     ...options,
   });
 }

@@ -2,7 +2,7 @@
 
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { CourseForm } from "@/components/modules/course/shared/CourseForm";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,13 @@ interface EditCourseProps {
 
 export function EditCourse({ courseId }: EditCourseProps) {
   const router = useRouter();
+  const pathname = usePathname();
+
+  
+  const coursesPath = pathname.startsWith("/instructor")
+    ? "/instructor/courses"
+    : "/admin/courses";
+
   const { data: courseData, isLoading, isError } = useGetCourseById(courseId);
   const { mutate: updateCourse, isPending: isUpdating } = useUpdateCourse();
 
@@ -28,7 +35,7 @@ export function EditCourse({ courseId }: EditCourseProps) {
           const isSuccess = res?.success ?? true;
           if (isSuccess) {
             toast.success(res?.message || "Course updated successfully!");
-            router.push("/admin/courses");
+            router.push(coursesPath); // Instructor হলে /instructor/courses এবং Admin হলে /admin/courses
           } else {
             toast.error(res?.message || "Failed to update course");
           }
@@ -43,7 +50,7 @@ export function EditCourse({ courseId }: EditCourseProps) {
   };
 
   const handleCancel = () => {
-    router.push("/admin/courses");
+    router.push(coursesPath);
   };
 
   if (isLoading) {
@@ -63,7 +70,7 @@ export function EditCourse({ courseId }: EditCourseProps) {
         <Button
           variant="outline"
           className="mt-4"
-          onClick={() => router.push("/admin/courses")}
+          onClick={() => router.push(coursesPath)}
         >
           Back to Courses
         </Button>
@@ -77,7 +84,7 @@ export function EditCourse({ courseId }: EditCourseProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="outline" size="icon" asChild>
-            <Link href="/admin/courses">
+            <Link href={coursesPath}>
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>

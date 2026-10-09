@@ -19,8 +19,10 @@ export function getCourses(params?: ICourseQueryParams) {
   });
 }
 
-export function getMyCourses() {
-  return apiClient<ApiResponse>("/api/v1/courses/my-courses");
+export function getMyCourses(params?: ICourseQueryParams) {
+  return apiClient<ApiResponse>("/api/v1/courses/my-courses", {
+    params,
+  });
 }
 
 export function getCourseById(id: string) {

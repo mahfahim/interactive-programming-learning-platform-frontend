@@ -4,7 +4,7 @@ import { CourseLevel, Language } from "../types";
 
 const learningOutcomeSchema = z.object({
   outcomeText: z.string().min(1, "Outcome text is required"),
-  displayOrder: z
+  displayOrder: z.coerce
     .number()
     .int()
     .nonnegative("Display order must be 0 or greater"),
@@ -12,7 +12,7 @@ const learningOutcomeSchema = z.object({
 
 const prerequisiteSchema = z.object({
   prerequisiteText: z.string().min(1, "Prerequisite text is required"),
-  displayOrder: z
+  displayOrder: z.coerce
     .number()
     .int()
     .nonnegative("Display order must be 0 or greater"),
@@ -50,8 +50,17 @@ export const updateCourseSchema = z.object({
     .min(1)
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
     .optional(),
-  coverImageUrl: z.string().url().optional(),
-  price: z.number().nonnegative("Price must be 0 or positive").optional(),
+  // empty string "" গ্রহণ করার জন্য or(z.literal("")) যোগ করা হয়েছে
+  coverImageUrl: z
+    .string()
+    .url("Invalid image URL")
+    .optional()
+    .or(z.literal("")),
+  // String কে অটোমেটিক Number এ রূপান্তর করতে z.coerce ব্যবহার করা হয়েছে
+  price: z.coerce
+    .number()
+    .nonnegative("Price must be 0 or positive")
+    .optional(),
   description: z
     .object({
       shortDescription: z.string().min(1).max(500).optional(),

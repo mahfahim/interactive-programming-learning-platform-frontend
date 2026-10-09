@@ -65,9 +65,9 @@ export function AdminCourseManagement({
     enabled: isAdmin,
   });
 
-  const instructorQuery = useGetMyCourses({
-    enabled: isInstructor,
-  });
+ const instructorQuery = useGetMyCourses(queryParams, {
+  enabled: isInstructor,
+});
 
   const { data: response, isLoading } = isInstructor
     ? instructorQuery
