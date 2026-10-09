@@ -4,7 +4,7 @@
 
 import { useRouter } from "next/navigation";
 import { use } from "react";
-import { SuperModuleCreateDialog } from "@/components/modules/superModule/shared/SuperModuleCreateDialog";
+import { SuperModuleCreateDialog } from "@/components/modules/superModule/SuperModuleCreateDialog";
 
 interface CreateSuperModulePageProps {
   params: Promise<{ courseId: string }>;

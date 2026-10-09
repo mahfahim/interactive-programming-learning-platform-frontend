@@ -2,7 +2,7 @@
 
 "use client";
 
-import { AuditLogsTable } from "@/components/modules/auditLog/AuditLogTable"; // Adjust path to match your component directory
+import { AuditLogsTable } from "@/components/modules/auditLog/AuditLogTable"; 
 
 export default function AnalyticsPage() {
   return (
