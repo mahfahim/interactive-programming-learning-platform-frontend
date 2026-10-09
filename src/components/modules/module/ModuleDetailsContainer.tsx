@@ -1,12 +1,12 @@
 "use client";
 
-import { ArrowLeft, Edit, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetModuleById } from "@/hooks/module.hook";
-import type { IModule } from "@/types"; // <-- Import IModule here
+import type { IModule } from "@/types";
 import { DeleteModuleDialog } from "./shared/DeleteModuleDialog";
 import { ModuleCard } from "./shared/ModuleCard";
 import { ModuleEditDialog } from "./shared/ModuleEditDialog";
@@ -16,19 +16,25 @@ interface ModuleDetailsContainerProps {
   courseId: string;
   superModuleId: string;
   moduleId: string;
+  isInstructor?: boolean;
+  isAdmin?: boolean;
 }
 
 export function ModuleDetailsContainer({
   courseId,
   superModuleId,
   moduleId,
+  isInstructor = false,
+  isAdmin = false,
 }: ModuleDetailsContainerProps) {
   const { data, isLoading, isError } = useGetModuleById(moduleId);
 
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  // Cast the response to IModule to satisfy TypeScript
+  // Dynamic Route Prefix Logic
+  const basePath = isAdmin ? "/admin" : isInstructor ? "/instructor" : "/admin";
+
   const moduleData = data?.data as IModule;
 
   if (isLoading) {
@@ -53,7 +59,7 @@ export function ModuleDetailsContainer({
       {/* Header Back Navigation & Action Controls */}
       <div className="flex items-center justify-between gap-4">
         <Button variant="outline" size="sm" asChild className="gap-2">
-          <Link href={`/admin/courses/${courseId}`}>
+          <Link href={`${basePath}/courses/${courseId}`}>
             <ArrowLeft className="h-4 w-4" /> Back to Course
           </Link>
         </Button>
@@ -84,6 +90,8 @@ export function ModuleDetailsContainer({
         canManage={true}
         courseId={courseId}
         superModuleId={superModuleId}
+        isInstructor={isInstructor}
+        isAdmin={isAdmin}
         onEdit={() => setIsEditOpen(true)}
         onDelete={() => setIsDeleteOpen(true)}
       />

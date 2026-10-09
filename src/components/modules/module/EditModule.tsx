@@ -10,19 +10,26 @@ interface EditModuleProps {
   courseId: string;
   superModuleId: string;
   moduleId: string;
+  isInstructor?: boolean;
+  isAdmin?: boolean;
 }
 
 export function EditModule({
   courseId,
   superModuleId,
   moduleId,
+  isInstructor = false,
+  isAdmin = false,
 }: EditModuleProps) {
   const router = useRouter();
   const { data, isLoading } = useGetModuleById(moduleId);
 
+  // Dynamic Route Prefix Logic
+  const basePath = isAdmin ? "/admin" : isInstructor ? "/instructor" : "/admin";
+
   const handleOpenChange = (open: boolean) => {
     if (!open) {
-      router.push(`/admin/courses/${courseId}`);
+      router.push(`${basePath}/courses/${courseId}`);
     }
   };
 
@@ -38,7 +45,7 @@ export function EditModule({
     <ModuleEditDialog
       open={true}
       onOpenChange={handleOpenChange}
-      module={(data?.data as IModule) || null} // <-- Cast it to IModule here
+      module={(data?.data as IModule) || null}
     />
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -16,17 +17,39 @@ interface ModuleCreateDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   superModuleId: string;
+  courseId?: string;
+  isInstructor?: boolean;
+  isAdmin?: boolean;
+  onSuccess?: () => void;
 }
 
 export function ModuleCreateDialog({
   open,
   onOpenChange,
   superModuleId,
+  courseId,
+  isInstructor = false,
+  isAdmin = false,
+  onSuccess,
 }: ModuleCreateDialogProps) {
+  const router = useRouter();
+
+  // Dynamic Route Prefix Logic
+  const basePath = isAdmin ? "/admin" : isInstructor ? "/instructor" : "/admin";
+
   const createModuleMutation = useCreateModule({
-    onSuccess: (res) => {
-      toast.success(res.message || "Module created successfully");
+    onSuccess: (res: any) => {
+      toast.success(res?.message || "Module created successfully");
       onOpenChange(false);
+      onSuccess?.();
+
+      // Module তৈরি হওয়ার পর রিডাইরেক্ট করবে (যদি courseId থেকে থাকে)
+      const createdId = res?.data?.id || res?.id;
+      if (createdId && courseId) {
+        router.push(
+          `${basePath}/courses/${courseId}/super-modules/${superModuleId}/modules/${createdId}/lessons`,
+        );
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message || "Failed to create module");

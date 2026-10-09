@@ -18,7 +18,9 @@ interface ModuleCardProps {
   module: IModule;
   canManage?: boolean;
   courseId?: string;
-  superModuleId?: string; // <-- superModuleId যোগ করা হয়েছে
+  superModuleId?: string;
+  isInstructor?: boolean;
+  isAdmin?: boolean;
   onEdit?: (module: IModule) => void;
   onDelete?: (module: IModule) => void;
   onView?: (module: IModule) => void;
@@ -29,16 +31,21 @@ export function ModuleCard({
   canManage = false,
   courseId,
   superModuleId,
+  isInstructor = false,
+  isAdmin = false,
   onEdit,
   onDelete,
   onView,
 }: ModuleCardProps) {
   const lessonCount = Array.isArray(module.lessons) ? module.lessons.length : 0;
 
-  // Admin Lessons base route
+  // Dynamic Route Prefix Logic
+  const basePath = isAdmin ? "/admin" : isInstructor ? "/instructor" : "/admin";
+
+  // Dynamic Lessons base route
   const lessonsBaseUrl =
     courseId && superModuleId
-      ? `/admin/courses/${courseId}/super-modules/${superModuleId}/modules/${module.id}/lessons`
+      ? `${basePath}/courses/${courseId}/super-modules/${superModuleId}/modules/${module.id}/lessons`
       : null;
 
   return (

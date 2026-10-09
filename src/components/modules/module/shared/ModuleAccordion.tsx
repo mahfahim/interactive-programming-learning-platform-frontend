@@ -33,6 +33,8 @@ interface ModuleAccordionProps {
   courseId?: string;
   superModuleId?: string;
   isStudent?: boolean;
+  isInstructor?: boolean;
+  isAdmin?: boolean;
   onEdit?: (module: IModule) => void;
   onDelete?: (module: IModule) => void;
 }
@@ -43,10 +45,15 @@ export function ModuleAccordion({
   courseId,
   superModuleId,
   isStudent = false,
+  isInstructor = false,
+  isAdmin = false,
   onEdit,
   onDelete,
 }: ModuleAccordionProps) {
   const { mutate: deleteLesson } = useDeleteLesson();
+
+  // Dynamic Base Path Logic
+  const basePath = isInstructor ? "/instructor" : "/admin";
 
   const sortedModules = [...modules].sort(
     (a, b) => a.displayOrder - b.displayOrder,
@@ -92,7 +99,7 @@ export function ModuleAccordion({
           }>) || [];
         const lessonCount = lessons.length;
 
-        const createLessonUrl = `/admin/courses/${courseId}/super-modules/${currentSuperModuleId}/modules/${module.id}/lessons/create`;
+        const createLessonUrl = `${basePath}/courses/${courseId}/super-modules/${currentSuperModuleId}/modules/${module.id}/lessons/create`;
 
         return (
           <AccordionItem
@@ -191,8 +198,8 @@ export function ModuleAccordion({
                     const lessonIdKey = resolvedLessonId || `lesson-${idx}`;
                     const lessonTitle = lesson.title || `Lesson ${idx + 1}`;
 
-                    const manageLessonUrl = `/admin/courses/${courseId}/super-modules/${currentSuperModuleId}/modules/${module.id}/lessons/${resolvedLessonId}`;
-                    const editLessonUrl = `/admin/courses/${courseId}/super-modules/${currentSuperModuleId}/modules/${module.id}/lessons/${resolvedLessonId}/edit`;
+                    const manageLessonUrl = `${basePath}/courses/${courseId}/super-modules/${currentSuperModuleId}/modules/${module.id}/lessons/${resolvedLessonId}`;
+                    const editLessonUrl = `${basePath}/courses/${courseId}/super-modules/${currentSuperModuleId}/modules/${module.id}/lessons/${resolvedLessonId}/edit`;
 
                     return (
                       <li

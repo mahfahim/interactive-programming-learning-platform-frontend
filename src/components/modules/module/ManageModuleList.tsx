@@ -17,17 +17,24 @@ import { ModuleHeader } from "./shared/ModuleHeader";
 import { ModuleSkeleton } from "./shared/ModuleSkeleton";
 import { ModuleStats } from "./shared/ModuleStats";
 
-interface AdminModuleListProps {
+interface ManageModuleListProps {
   superModuleId: string;
   courseId?: string;
   showStats?: boolean;
+  isInstructor?: boolean;
+  isAdmin?: boolean;
 }
 
-export function AdminModuleList({
+export function ManageModuleList({
   superModuleId,
   courseId,
   showStats = true,
-}: AdminModuleListProps) {
+  isInstructor = false,
+  isAdmin = true,
+}: ManageModuleListProps) {
+  const effectiveIsInstructor = isInstructor || !isAdmin;
+  const canManage = effectiveIsInstructor || isAdmin;
+
   // 1. Data Fetching via React Query Hook
   const {
     data: modulesResponse,
@@ -73,7 +80,7 @@ export function AdminModuleList({
       <ModuleHeader
         title="Modules"
         totalModules={modules.length}
-        canManage={true}
+        canManage={canManage}
         onCreateClick={() => setIsCreateOpen(true)}
       />
 
@@ -83,16 +90,18 @@ export function AdminModuleList({
       {/* 3. Main Content Rendering */}
       {modules.length === 0 ? (
         <ModuleEmptyState
-          canManage={true}
+          canManage={canManage}
           onCreateClick={() => setIsCreateOpen(true)}
         />
       ) : (
         <ModuleAccordion
           modules={modules}
-          canManage={true}
+          canManage={canManage}
           courseId={courseId}
           superModuleId={superModuleId}
           isStudent={false}
+          isInstructor={effectiveIsInstructor}
+          isAdmin={isAdmin}
           onEdit={(m) => setSelectedModuleForEdit(m)}
           onDelete={(m) => setSelectedModuleForDelete(m)}
         />
@@ -123,7 +132,7 @@ export function AdminModuleList({
           open={Boolean(selectedModuleForView)}
           onOpenChange={(open) => !open && setSelectedModuleForView(null)}
           module={selectedModuleForView}
-          canManage={true}
+          canManage={canManage}
           onEdit={(m) => {
             setSelectedModuleForView(null);
             setSelectedModuleForEdit(m);
