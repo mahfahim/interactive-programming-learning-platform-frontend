@@ -1,17 +1,9 @@
 import apiClient from "@/lib/apiClient";
 import type {
   ApiResponse,
-  ICreateQuizPayload,
   ISubmitQuizPayload,
-  IUpdateQuizPayload,
 } from "@/types";
 
-export function createQuiz(payload: ICreateQuizPayload) {
-  return apiClient<ApiResponse>("/api/v1/quizzes", {
-    method: "POST",
-    body: payload,
-  });
-}
 
 export function getQuizByLessonId(lessonId: string) {
   return apiClient<ApiResponse>(`/api/v1/quizzes/lessons/${lessonId}`);
@@ -40,12 +32,6 @@ export function getQuizById(id: string) {
   return apiClient<ApiResponse>(`/api/v1/quizzes/${id}`);
 }
 
-export function updateQuiz(id: string, payload: IUpdateQuizPayload) {
-  return apiClient<ApiResponse>(`/api/v1/quizzes/${id}`, {
-    method: "PATCH",
-    body: payload,
-  });
-}
 
 export function deleteQuiz(id: string) {
   return apiClient<ApiResponse>(`/api/v1/quizzes/${id}`, {

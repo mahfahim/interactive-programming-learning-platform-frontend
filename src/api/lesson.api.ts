@@ -18,7 +18,7 @@ export function getLessonById(id: string) {
   return apiClient<ApiResponse<TLessonResponse>>(`/api/v1/lessons/${id}`);
 }
 
-// 🟢 ADDED: Get lessons by module ID
+//  ADDED: Get lessons by module ID
 export function getLessonsByModuleId(moduleId: string) {
   return apiClient<ApiResponse<TLessonResponse[]>>(
     `/api/v1/lessons/module/${moduleId}`,
@@ -37,7 +37,6 @@ export function deleteLesson(id: string) {
     method: "DELETE",
   });
 }
-
 
 export function updateLessonProgress(
   id: string,
