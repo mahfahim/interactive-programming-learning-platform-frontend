@@ -175,11 +175,10 @@ export const LoginForm: React.FC = () => {
               autoComplete="current-password"
               disabled={loginMutation.isPending}
               {...register("password")}
-              className={`pr-10 ${
-                errors.password
+              className={`pr-10 ${errors.password
                   ? "border-destructive focus-visible:ring-destructive"
                   : ""
-              }`}
+                }`}
             />
             <button
               type="button"
