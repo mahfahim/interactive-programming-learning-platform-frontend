@@ -22,7 +22,7 @@ function formatPrice(price: string | number): string {
 interface CourseCardProps {
   course: ICourse;
   detailUrlPrefix?: string;
-  actions?: React.ReactNode; 
+  actions?: React.ReactNode;
 }
 
 export function CourseCard({

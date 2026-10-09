@@ -1,4 +1,4 @@
-import { CourseManagement } from "@/components/modules/course/CourseManagement";
+import { AdminCourseManagement } from "@/components/modules/course/CourseManagement";
 import { Role } from "@/types/enum.type";
 
 export const metadata = {
@@ -8,6 +8,6 @@ export const metadata = {
 
 export default function InstructorCoursesPage() {
   return (
-    <CourseManagement role={Role.INSTRUCTOR} urlPrefix="/instructor/courses" />
+    <AdminCourseManagement role={Role.INSTRUCTOR} urlPrefix="/instructor/courses" />
   );
 }

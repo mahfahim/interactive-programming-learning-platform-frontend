@@ -1,17 +1,8 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { ArrowLeft, Plus, Trash2, AlertCircle } from "lucide-react";
+import { AlertCircle, ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-import { useUpdateLesson } from "@/hooks/lesson.hook";
-import {
-  type IUpdateLessonInput,
-  LessonType,
-  type TLessonResponse,
-} from "@/types";
-import { updateLessonSchema } from "@/validation/lesson.validation";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,6 +10,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useUpdateLesson } from "@/hooks/lesson.hook";
+import {
+  type IUpdateLessonInput,
+  LessonType,
+  type TLessonResponse,
+} from "@/types";
+import { updateLessonSchema } from "@/validation/lesson.validation";
 
 interface EditLessonFormProps {
   lesson: TLessonResponse;
@@ -54,9 +52,18 @@ export function EditLessonForm({
   const { mutate: updateLesson, isPending } = useUpdateLesson();
 
   // 🟢 Safe extraction of sub-properties from TLessonResponse
-  const articleObj = lesson.article as { sections?: Array<{ content?: string }> } | null;
-  const videoObj = lesson.video as { videoUrl?: string; durationSeconds?: number } | null;
-  const assignmentObj = lesson.assignment as { title?: string; instructions?: string; dueDate?: string } | null;
+  const articleObj = lesson.article as {
+    sections?: Array<{ content?: string }>;
+  } | null;
+  const videoObj = lesson.video as {
+    videoUrl?: string;
+    durationSeconds?: number;
+  } | null;
+  const assignmentObj = lesson.assignment as {
+    title?: string;
+    instructions?: string;
+    dueDate?: string;
+  } | null;
   const codingObj = lesson.coding as {
     problemStatement?: string;
     inputFormat?: string;
@@ -64,41 +71,50 @@ export function EditLessonForm({
     timeLimitMs?: number;
     memoryLimitKb?: number;
   } | null;
-  const quizObj = lesson.quiz as { questions?: Array<Record<string, unknown>> } | null;
+  const quizObj = lesson.quiz as {
+    questions?: Array<Record<string, unknown>>;
+  } | null;
 
   // 🟢 Article content safe extraction
   const articleContent = articleObj?.sections?.[0]?.content || "";
 
   // 🟢 Quiz Initial Questions extraction with explicit typing
-  const initialQuestions: QuizQuestionState[] = Array.isArray(quizObj?.questions)
-    ? quizObj.questions.map((q: Record<string, unknown>, qIdx: number): QuizQuestionState => ({
-        id: generateId(),
-        questionText: (q.questionText as string) || "",
-        displayOrder: (q.displayOrder as number) ?? qIdx + 1,
-        options: Array.isArray(q.options)
-          ? (q.options as Array<Record<string, unknown>>).map(
-              (opt: Record<string, unknown>, oIdx: number): QuizOptionState => ({
-                id: generateId(),
-                optionText: (opt.optionText as string) || "",
-                isCorrect: Boolean(opt.isCorrect),
-                displayOrder: (opt.displayOrder as number) ?? oIdx + 1,
-              })
-            )
-          : [
-              {
-                id: generateId(),
-                optionText: "",
-                isCorrect: true,
-                displayOrder: 1,
-              },
-              {
-                id: generateId(),
-                optionText: "",
-                isCorrect: false,
-                displayOrder: 2,
-              },
-            ],
-      }))
+  const initialQuestions: QuizQuestionState[] = Array.isArray(
+    quizObj?.questions,
+  )
+    ? quizObj.questions.map(
+        (q: Record<string, unknown>, qIdx: number): QuizQuestionState => ({
+          id: generateId(),
+          questionText: (q.questionText as string) || "",
+          displayOrder: (q.displayOrder as number) ?? qIdx + 1,
+          options: Array.isArray(q.options)
+            ? (q.options as Array<Record<string, unknown>>).map(
+                (
+                  opt: Record<string, unknown>,
+                  oIdx: number,
+                ): QuizOptionState => ({
+                  id: generateId(),
+                  optionText: (opt.optionText as string) || "",
+                  isCorrect: Boolean(opt.isCorrect),
+                  displayOrder: (opt.displayOrder as number) ?? oIdx + 1,
+                }),
+              )
+            : [
+                {
+                  id: generateId(),
+                  optionText: "",
+                  isCorrect: true,
+                  displayOrder: 1,
+                },
+                {
+                  id: generateId(),
+                  optionText: "",
+                  isCorrect: false,
+                  displayOrder: 2,
+                },
+              ],
+        }),
+      )
     : [
         {
           id: generateId(),
@@ -127,7 +143,9 @@ export function EditLessonForm({
     : "";
 
   // 🟢 Safe extraction of isFree using Intersection Type
-  const isFreeValue = Boolean((lesson as TLessonResponse & { isFree?: boolean }).isFree);
+  const isFreeValue = Boolean(
+    (lesson as TLessonResponse & { isFree?: boolean }).isFree,
+  );
 
   const form = useForm({
     defaultValues: {
@@ -213,9 +231,9 @@ export function EditLessonForm({
                     optionText: opt.optionText,
                     displayOrder: oIdx + 1,
                     isCorrect: Boolean(opt.isCorrect),
-                  })
+                  }),
                 ),
-              })
+              }),
             ),
           };
         }
@@ -237,7 +255,7 @@ export function EditLessonForm({
         {
           onSuccess: () => {
             router.push(
-              `/admin/courses/${courseId}/super-modules/${superModuleId}/modules/${moduleId}/lessons`
+              `/admin/courses/${courseId}/super-modules/${superModuleId}/modules/${moduleId}/lessons`,
             );
             router.refresh();
           },
@@ -245,7 +263,7 @@ export function EditLessonForm({
             console.error("Update Error:", error);
             alert(error.message || "Failed to update lesson");
           },
-        }
+        },
       );
     },
   });
@@ -283,11 +301,7 @@ export function EditLessonForm({
         </div>
 
         <div className="flex gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.back()}
-          >
+          <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
           </Button>
           <Button
@@ -348,7 +362,7 @@ export function EditLessonForm({
                     onBlur={field.handleBlur}
                     onChange={(e) =>
                       field.handleChange(
-                        e.target.value === "" ? 1 : Number(e.target.value)
+                        e.target.value === "" ? 1 : Number(e.target.value),
                       )
                     }
                   />
@@ -484,7 +498,7 @@ export function EditLessonForm({
                       field.handleChange(
                         e.target.value === ""
                           ? undefined
-                          : Number(e.target.value)
+                          : Number(e.target.value),
                       )
                     }
                   />
@@ -547,9 +561,7 @@ export function EditLessonForm({
             <form.Field name="assignmentData.dueDate">
               {(field) => (
                 <div className="space-y-2">
-                  <Label htmlFor={field.name}>
-                    Due Date & Time (Optional)
-                  </Label>
+                  <Label htmlFor={field.name}>Due Date & Time (Optional)</Label>
                   <Input
                     id={field.name}
                     name={field.name}
@@ -611,9 +623,7 @@ export function EditLessonForm({
               <form.Field name="codingData.outputFormat">
                 {(field) => (
                   <div className="space-y-2">
-                    <Label htmlFor={field.name}>
-                      Output Format (Optional)
-                    </Label>
+                    <Label htmlFor={field.name}>Output Format (Optional)</Label>
                     <Textarea
                       id={field.name}
                       rows={3}
@@ -709,7 +719,9 @@ export function EditLessonForm({
                     return;
                   }
                   const updated = questions
-                    .filter((_: QuizQuestionState, idx: number) => idx !== qIndex)
+                    .filter(
+                      (_: QuizQuestionState, idx: number) => idx !== qIndex,
+                    )
                     .map((q: QuizQuestionState, idx: number) => ({
                       ...q,
                       displayOrder: idx + 1,
@@ -719,7 +731,7 @@ export function EditLessonForm({
 
                 const handleQuestionTextChange = (
                   qIndex: number,
-                  text: string
+                  text: string,
                 ) => {
                   const updated = [...questions];
                   updated[qIndex] = {
@@ -731,8 +743,7 @@ export function EditLessonForm({
 
                 const handleAddOption = (qIndex: number) => {
                   const question = questions[qIndex];
-                  const nextOptionOrder =
-                    (question.options?.length || 0) + 1;
+                  const nextOptionOrder = (question.options?.length || 0) + 1;
                   const updatedOptions: QuizOptionState[] = [
                     ...(question.options || []),
                     {
@@ -747,10 +758,7 @@ export function EditLessonForm({
                   quizField.handleChange({ questions: updated });
                 };
 
-                const handleRemoveOption = (
-                  qIndex: number,
-                  oIndex: number
-                ) => {
+                const handleRemoveOption = (qIndex: number, oIndex: number) => {
                   const question = questions[qIndex];
                   if (question.options.length <= 1) {
                     alert("A question must have at least one option.");
@@ -764,7 +772,7 @@ export function EditLessonForm({
                     }));
 
                   const hasCorrect = updatedOptions.some(
-                    (opt: QuizOptionState) => opt.isCorrect
+                    (opt: QuizOptionState) => opt.isCorrect,
                   );
                   if (!hasCorrect && updatedOptions.length > 0) {
                     updatedOptions[0].isCorrect = true;
@@ -778,7 +786,7 @@ export function EditLessonForm({
                 const handleOptionTextChange = (
                   qIndex: number,
                   oIndex: number,
-                  text: string
+                  text: string,
                 ) => {
                   const question = questions[qIndex];
                   const updatedOptions = [...question.options];
@@ -793,14 +801,15 @@ export function EditLessonForm({
 
                 const handleToggleCorrectOption = (
                   qIndex: number,
-                  oIndex: number
+                  oIndex: number,
                 ) => {
                   const question = questions[qIndex];
                   const updatedOptions = question.options.map(
                     (opt: QuizOptionState, idx: number) => ({
                       ...opt,
-                      isCorrect: idx === oIndex ? !opt.isCorrect : opt.isCorrect,
-                    })
+                      isCorrect:
+                        idx === oIndex ? !opt.isCorrect : opt.isCorrect,
+                    }),
                   );
                   const updated = [...questions];
                   updated[qIndex] = { ...question, options: updatedOptions };
@@ -826,11 +835,14 @@ export function EditLessonForm({
 
                     {questions.map((q: QuizQuestionState, qIndex: number) => {
                       const hasCorrectOption = q.options?.some(
-                        (opt: QuizOptionState) => opt.isCorrect
+                        (opt: QuizOptionState) => opt.isCorrect,
                       );
 
                       return (
-                        <Card key={q.id} className="border border-muted bg-card">
+                        <Card
+                          key={q.id}
+                          className="border border-muted bg-card"
+                        >
                           <CardHeader className="py-3 px-4 flex flex-row items-center justify-between border-b bg-muted/20">
                             <div className="flex items-center gap-2">
                               <span className="font-semibold text-sm">
@@ -864,7 +876,7 @@ export function EditLessonForm({
                                 onChange={(e) =>
                                   handleQuestionTextChange(
                                     qIndex,
-                                    e.target.value
+                                    e.target.value,
                                   )
                                 }
                               />
@@ -889,7 +901,7 @@ export function EditLessonForm({
                                           onCheckedChange={() =>
                                             handleToggleCorrectOption(
                                               qIndex,
-                                              oIndex
+                                              oIndex,
                                             )
                                           }
                                         />
@@ -901,7 +913,7 @@ export function EditLessonForm({
                                           handleOptionTextChange(
                                             qIndex,
                                             oIndex,
-                                            e.target.value
+                                            e.target.value,
                                           )
                                         }
                                         className={
@@ -924,7 +936,7 @@ export function EditLessonForm({
                                         </Button>
                                       )}
                                     </div>
-                                  )
+                                  ),
                                 )}
                               </div>
 

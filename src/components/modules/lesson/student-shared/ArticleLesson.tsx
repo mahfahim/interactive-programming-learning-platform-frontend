@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
 import { BookOpen } from "lucide-react";
+import type React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -76,7 +76,11 @@ export function ArticleLesson({ articleData }: ArticleLessonProps) {
                 {children}
               </a>
             ),
-            code: ({ className, children, ...props }: React.ComponentPropsWithoutRef<"code">) => {
+            code: ({
+              className,
+              children,
+              ...props
+            }: React.ComponentPropsWithoutRef<"code">) => {
               const match = /language-(\w+)/.exec(className || "");
               return match ? (
                 <div className="my-4 rounded-lg overflow-hidden border border-slate-800 bg-slate-950">

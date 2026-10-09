@@ -1,15 +1,15 @@
 "use client";
 
-import React, { Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
 import {
-  CheckCircle2,
-  XCircle,
   AlertCircle,
   ArrowRight,
-  RotateCcw,
   BookOpen,
+  CheckCircle2,
+  RotateCcw,
+  XCircle,
 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 
 function PaymentCallbackContent() {
@@ -34,7 +34,8 @@ function PaymentCallbackContent() {
             Payment Successful!
           </h1>
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-            Your enrollment is complete! You now have full access to all premium lessons and course materials.
+            Your enrollment is complete! You now have full access to all premium
+            lessons and course materials.
           </p>
           {(tranId || paymentID) && (
             <div className="mt-4 rounded-lg bg-slate-50 p-3 text-xs text-slate-500 dark:bg-slate-800">
@@ -50,7 +51,8 @@ function PaymentCallbackContent() {
               onClick={() => router.push("/student/courses")}
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 flex items-center justify-center gap-2 cursor-pointer"
             >
-              <BookOpen className="h-4 w-4" /> Go to My Enrolled Courses <ArrowRight className="h-4 w-4" />
+              <BookOpen className="h-4 w-4" /> Go to My Enrolled Courses{" "}
+              <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
         </>
@@ -82,7 +84,8 @@ function PaymentCallbackContent() {
             Payment Failed
           </h1>
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-            We couldn't process your transaction. Please try again or use a different payment method.
+            We couldn't process your transaction. Please try again or use a
+            different payment method.
           </p>
           <Button
             type="button"
@@ -100,7 +103,13 @@ function PaymentCallbackContent() {
 export default function PaymentCallbackPage() {
   return (
     <div className="flex min-h-[80vh] items-center justify-center p-4">
-      <Suspense fallback={<div className="text-center text-slate-500">Loading payment details...</div>}>
+      <Suspense
+        fallback={
+          <div className="text-center text-slate-500">
+            Loading payment details...
+          </div>
+        }
+      >
         <PaymentCallbackContent />
       </Suspense>
     </div>

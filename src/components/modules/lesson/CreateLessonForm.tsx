@@ -1,33 +1,31 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import {
+  AlertCircle,
   ArrowLeft,
   Code,
+  FileCheck,
   FileText,
   HelpCircle,
-  FileCheck,
-  Video,
   Plus,
   Trash2,
-  AlertCircle,
+  Video,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-import { lessonKeys, useCreateLesson } from "@/hooks/lesson.hook";
-import { moduleKeys } from "@/hooks/module.hook";
-import { superModuleKeys } from "@/hooks/superModule.hook";
-import { LessonType, type ICreateLessonInput } from "@/types";
-import { createLessonSchema } from "@/validation/lesson.validation";
-
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { lessonKeys, useCreateLesson } from "@/hooks/lesson.hook";
+import { moduleKeys } from "@/hooks/module.hook";
+import { superModuleKeys } from "@/hooks/superModule.hook";
+import { type ICreateLessonInput, LessonType } from "@/types";
+import { createLessonSchema } from "@/validation/lesson.validation";
 
 interface CreateLessonFormProps {
   courseId: string;
@@ -48,7 +46,7 @@ export function CreateLessonForm({
   const { mutate: createLesson, isPending } = useCreateLesson();
 
   const [selectedType, setSelectedType] = useState<LessonType>(
-    LessonType.ARTICLE
+    LessonType.ARTICLE,
   );
   const [activeTab, setActiveTab] = useState<"write" | "preview">("write");
 
@@ -147,7 +145,7 @@ export function CreateLessonForm({
                 displayOrder: oIdx + 1,
                 isCorrect: Boolean(opt.isCorrect),
               })),
-            })
+            }),
           );
         }
       } else if (selectedType === LessonType.ASSIGNMENT) {
@@ -183,7 +181,7 @@ export function CreateLessonForm({
                 expectedOutput: tc.expectedOutput,
                 displayOrder: tcIdx + 1,
                 isHidden: Boolean(tc.isHidden),
-              })
+              }),
             );
           }
         }
@@ -197,7 +195,7 @@ export function CreateLessonForm({
           .map((issue) => `${issue.path.join(".") || "Form"}: ${issue.message}`)
           .join("\n");
         alert(
-          `Please fix the following validation errors:\n\n${errorMessages}`
+          `Please fix the following validation errors:\n\n${errorMessages}`,
         );
         return;
       }
@@ -212,7 +210,7 @@ export function CreateLessonForm({
           ]);
 
           router.push(
-            `/admin/courses/${courseId}/super-modules/${superModuleId}/modules/${moduleId}/lessons`
+            `/admin/courses/${courseId}/super-modules/${superModuleId}/modules/${moduleId}/lessons`,
           );
           router.refresh();
         },
@@ -256,11 +254,7 @@ export function CreateLessonForm({
         </div>
 
         <div className="flex gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.back()}
-          >
+          <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
           </Button>
           <Button
@@ -481,7 +475,7 @@ export function CreateLessonForm({
                           field.handleChange(
                             e.target.value === ""
                               ? undefined
-                              : Number(e.target.value)
+                              : Number(e.target.value),
                           )
                         }
                       />
@@ -591,7 +585,7 @@ export function CreateLessonForm({
                   const handleTestCaseChange = (
                     tcIndex: number,
                     fieldName: string,
-                    val: any
+                    val: any,
                   ) => {
                     const updated = [...testCases];
                     updated[tcIndex] = {
@@ -695,7 +689,10 @@ export function CreateLessonForm({
                         </div>
 
                         {testCases.map((tc, tcIndex) => (
-                          <Card key={tc.id} className="border border-muted bg-card">
+                          <Card
+                            key={tc.id}
+                            className="border border-muted bg-card"
+                          >
                             <CardHeader className="py-3 px-4 flex flex-row items-center justify-between border-b bg-muted/20">
                               <div className="flex items-center gap-3">
                                 <span className="font-semibold text-sm">
@@ -709,7 +706,7 @@ export function CreateLessonForm({
                                       handleTestCaseChange(
                                         tcIndex,
                                         "isHidden",
-                                        Boolean(checked)
+                                        Boolean(checked),
                                       )
                                     }
                                   />
@@ -743,7 +740,7 @@ export function CreateLessonForm({
                                     handleTestCaseChange(
                                       tcIndex,
                                       "inputData",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                 />
@@ -761,7 +758,7 @@ export function CreateLessonForm({
                                     handleTestCaseChange(
                                       tcIndex,
                                       "expectedOutput",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                 />
@@ -822,7 +819,7 @@ export function CreateLessonForm({
 
                   const handleQuestionTextChange = (
                     qIndex: number,
-                    text: string
+                    text: string,
                   ) => {
                     const updated = [...questions];
                     updated[qIndex] = {
@@ -834,8 +831,7 @@ export function CreateLessonForm({
 
                   const handleAddOption = (qIndex: number) => {
                     const question = questions[qIndex];
-                    const nextOptionOrder =
-                      (question.options?.length || 0) + 1;
+                    const nextOptionOrder = (question.options?.length || 0) + 1;
                     const updatedOptions = [
                       ...(question.options || []),
                       {
@@ -852,7 +848,7 @@ export function CreateLessonForm({
 
                   const handleRemoveOption = (
                     qIndex: number,
-                    oIndex: number
+                    oIndex: number,
                   ) => {
                     const question = questions[qIndex];
                     if (question.options.length <= 1) {
@@ -864,7 +860,7 @@ export function CreateLessonForm({
                       .map((opt, idx) => ({ ...opt, displayOrder: idx + 1 }));
 
                     const hasCorrect = updatedOptions.some(
-                      (opt) => opt.isCorrect
+                      (opt) => opt.isCorrect,
                     );
                     if (!hasCorrect && updatedOptions.length > 0) {
                       updatedOptions[0].isCorrect = true;
@@ -878,7 +874,7 @@ export function CreateLessonForm({
                   const handleOptionTextChange = (
                     qIndex: number,
                     oIndex: number,
-                    text: string
+                    text: string,
                   ) => {
                     const question = questions[qIndex];
                     const updatedOptions = [...question.options];
@@ -893,16 +889,14 @@ export function CreateLessonForm({
 
                   const handleToggleCorrectOption = (
                     qIndex: number,
-                    oIndex: number
+                    oIndex: number,
                   ) => {
                     const question = questions[qIndex];
-                    const updatedOptions = question.options.map(
-                      (opt, idx) => ({
-                        ...opt,
-                        isCorrect:
-                          idx === oIndex ? !opt.isCorrect : opt.isCorrect,
-                      })
-                    );
+                    const updatedOptions = question.options.map((opt, idx) => ({
+                      ...opt,
+                      isCorrect:
+                        idx === oIndex ? !opt.isCorrect : opt.isCorrect,
+                    }));
                     const updated = [...questions];
                     updated[qIndex] = { ...question, options: updatedOptions };
                     quizField.handleChange({ questions: updated });
@@ -927,7 +921,7 @@ export function CreateLessonForm({
 
                       {questions.map((q, qIndex) => {
                         const hasCorrectOption = q.options?.some(
-                          (opt) => opt.isCorrect
+                          (opt) => opt.isCorrect,
                         );
 
                         return (
@@ -968,7 +962,7 @@ export function CreateLessonForm({
                                   onChange={(e) =>
                                     handleQuestionTextChange(
                                       qIndex,
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                 />
@@ -994,7 +988,7 @@ export function CreateLessonForm({
                                           onCheckedChange={() =>
                                             handleToggleCorrectOption(
                                               qIndex,
-                                              oIndex
+                                              oIndex,
                                             )
                                           }
                                         />
@@ -1006,7 +1000,7 @@ export function CreateLessonForm({
                                           handleOptionTextChange(
                                             qIndex,
                                             oIndex,
-                                            e.target.value
+                                            e.target.value,
                                           )
                                         }
                                         className={

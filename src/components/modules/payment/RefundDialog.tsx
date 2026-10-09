@@ -1,12 +1,9 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { toast } from "sonner";
 import { Loader2, RotateCcw } from "lucide-react";
-
-import { useInitiateRefund } from "@/hooks/payment.hook";
-import { PaymentValidation } from "@/validation/payment.validation";
-
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +14,8 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { useInitiateRefund } from "@/hooks/payment.hook";
+import { PaymentValidation } from "@/validation/payment.validation";
 
 interface RefundDialogProps {
   paymentId: string | null;
@@ -25,7 +23,11 @@ interface RefundDialogProps {
   onClose: () => void;
 }
 
-export function RefundDialog({ paymentId, isOpen, onClose }: RefundDialogProps) {
+export function RefundDialog({
+  paymentId,
+  isOpen,
+  onClose,
+}: RefundDialogProps) {
   const { mutate: refund, isPending } = useInitiateRefund({
     onSuccess: () => {
       toast.success("Payment refunded and enrollment canceled successfully.");
@@ -56,7 +58,8 @@ export function RefundDialog({ paymentId, isOpen, onClose }: RefundDialogProps) 
             Initiate Payment Refund
           </DialogTitle>
           <DialogDescription>
-            This action will attempt to refund the payment via the gateway and automatically cancel the student's course enrollment.
+            This action will attempt to refund the payment via the gateway and
+            automatically cancel the student's course enrollment.
           </DialogDescription>
         </DialogHeader>
 
@@ -72,7 +75,10 @@ export function RefundDialog({ paymentId, isOpen, onClose }: RefundDialogProps) 
             name="reason"
             validators={{
               onChange: ({ value }: { value: string }) => {
-                const result = PaymentValidation.initiateRefundValidationSchema.safeParse({ reason: value });
+                const result =
+                  PaymentValidation.initiateRefundValidationSchema.safeParse({
+                    reason: value,
+                  });
                 if (!result.success) {
                   return result.error.issues[0]?.message;
                 }
@@ -100,7 +106,9 @@ export function RefundDialog({ paymentId, isOpen, onClose }: RefundDialogProps) 
                         if (!err) return "";
                         if (typeof err === "string") return err;
                         const obj = err as Record<string, unknown>;
-                        return typeof obj?.message === "string" ? obj.message : String(err);
+                        return typeof obj?.message === "string"
+                          ? obj.message
+                          : String(err);
                       })
                       .filter(Boolean)
                       .join(", ")}
@@ -111,7 +119,12 @@ export function RefundDialog({ paymentId, isOpen, onClose }: RefundDialogProps) 
           </form.Field>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isPending}
+            >
               Cancel
             </Button>
             <Button type="submit" variant="destructive" disabled={isPending}>

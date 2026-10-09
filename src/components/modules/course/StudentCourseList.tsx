@@ -15,7 +15,9 @@ interface StudentCourseListProps {
   urlPrefix?: string;
 }
 
-export function StudentCourseList({ urlPrefix = "/courses" }: StudentCourseListProps) {
+export function StudentCourseList({
+  urlPrefix = "/courses",
+}: StudentCourseListProps) {
   const [search, setSearch] = useState("");
   const [level, setLevel] = useState<CourseLevel | "ALL">("ALL");
   const [sortBy, setSortBy] = useState("createdAt");

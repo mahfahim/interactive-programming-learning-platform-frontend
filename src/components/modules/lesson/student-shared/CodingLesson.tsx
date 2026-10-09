@@ -1,36 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
 import {
-  Code,
-  Clock,
-  HardDrive,
-  Terminal,
-  Play,
-  Send,
-  CheckCircle2,
-  XCircle,
   AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Code,
+  FileText,
+  HardDrive,
   History,
   Loader2,
-  FileText,
+  Play,
+  Send,
+  Terminal,
+  XCircle,
 } from "lucide-react";
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-
-import {
-  useRunCode,
-  useSubmitCode,
-  useGetMySubmissions,
-} from "@/hooks/judge.hook";
-import  {
-  ProgrammingLanguage,
-  SubmissionStatus,
-  ICodeRunResult,
-  ICodeSubmitResult,
-  ApiResponse,
-} from "@/types";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,6 +27,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  useGetMySubmissions,
+  useRunCode,
+  useSubmitCode,
+} from "@/hooks/judge.hook";
+import {
+  type ApiResponse,
+  type ICodeRunResult,
+  type ICodeSubmitResult,
+  ProgrammingLanguage,
+  SubmissionStatus,
+} from "@/types";
 
 export interface CodingTestCaseDetails {
   id?: string;
@@ -160,7 +158,10 @@ export function CodingLesson({ codingData }: CodingLessonProps) {
         );
       case SubmissionStatus.WRONG_ANSWER:
         return (
-          <Badge variant="destructive" className="bg-rose-600 hover:bg-rose-700 text-white gap-1 font-medium">
+          <Badge
+            variant="destructive"
+            className="bg-rose-600 hover:bg-rose-700 text-white gap-1 font-medium"
+          >
             <XCircle className="w-3.5 h-3.5" /> Wrong Answer
           </Badge>
         );
@@ -178,18 +179,28 @@ export function CodingLesson({ codingData }: CodingLessonProps) {
         );
       case SubmissionStatus.COMPILATION_ERROR:
         return (
-          <Badge variant="outline" className="border-rose-500/50 text-rose-400 bg-rose-950/30 gap-1 font-medium">
+          <Badge
+            variant="outline"
+            className="border-rose-500/50 text-rose-400 bg-rose-950/30 gap-1 font-medium"
+          >
             <AlertTriangle className="w-3.5 h-3.5" /> Compilation Error
           </Badge>
         );
       case SubmissionStatus.RUNTIME_ERROR:
         return (
-          <Badge variant="outline" className="border-orange-500/50 text-orange-400 bg-orange-950/30 gap-1 font-medium">
+          <Badge
+            variant="outline"
+            className="border-orange-500/50 text-orange-400 bg-orange-950/30 gap-1 font-medium"
+          >
             <AlertTriangle className="w-3.5 h-3.5" /> Runtime Error
           </Badge>
         );
       default:
-        return <Badge variant="secondary" className="bg-zinc-800 text-zinc-300">{status}</Badge>;
+        return (
+          <Badge variant="secondary" className="bg-zinc-800 text-zinc-300">
+            {status}
+          </Badge>
+        );
     }
   };
 
@@ -197,7 +208,6 @@ export function CodingLesson({ codingData }: CodingLessonProps) {
     <div className="w-full text-zinc-100 dark bg-black min-h-screen p-2 sm:p-4 lg:p-6 font-sans">
       {/* 2-Column Responsive Layout: Mobile=1 col, Desktop=2 col */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start max-w-[1700px] mx-auto">
-        
         {/* LEFT COLUMN: Problem Statement & Details */}
         <div className="lg:col-span-5 flex flex-col gap-4 border border-zinc-800/80 bg-zinc-950 p-4 sm:p-5 rounded-xl shadow-2xl">
           {/* Header Info */}
@@ -211,11 +221,17 @@ export function CodingLesson({ codingData }: CodingLessonProps) {
               </h3>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="border-zinc-800 bg-zinc-900 text-zinc-300 flex items-center gap-1.5 text-xs py-1">
+              <Badge
+                variant="outline"
+                className="border-zinc-800 bg-zinc-900 text-zinc-300 flex items-center gap-1.5 text-xs py-1"
+              >
                 <Clock className="w-3.5 h-3.5 text-zinc-400" />
                 {codingData?.timeLimitMs ?? 1000} ms
               </Badge>
-              <Badge variant="outline" className="border-zinc-800 bg-zinc-900 text-zinc-300 flex items-center gap-1.5 text-xs py-1">
+              <Badge
+                variant="outline"
+                className="border-zinc-800 bg-zinc-900 text-zinc-300 flex items-center gap-1.5 text-xs py-1"
+              >
                 <HardDrive className="w-3.5 h-3.5 text-zinc-400" />
                 {codingData?.memoryLimitKb ?? 256000} KB
               </Badge>
@@ -230,7 +246,8 @@ export function CodingLesson({ codingData }: CodingLessonProps) {
             </div>
             <div className="p-4 bg-zinc-900/60 text-zinc-200 rounded-lg text-sm leading-relaxed border border-zinc-800/80 prose prose-invert max-w-none">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {codingData?.problemStatement || "No problem statement provided."}
+                {codingData?.problemStatement ||
+                  "No problem statement provided."}
               </ReactMarkdown>
             </div>
           </div>
@@ -268,34 +285,36 @@ export function CodingLesson({ codingData }: CodingLessonProps) {
                 Sample Test Cases
               </h4>
               <div className="space-y-3">
-                {publicTestCases.map((tc: CodingTestCaseDetails, tcIdx: number) => (
-                  <div
-                    key={tc.id || `tc-${tcIdx}`}
-                    className="border border-zinc-800/80 rounded-lg p-3 bg-zinc-900/40 space-y-2 text-xs font-mono"
-                  >
-                    <div className="text-zinc-400 font-semibold border-b border-zinc-800/60 pb-1.5 text-[11px]">
-                      Sample Case #{tc.displayOrder ?? tcIdx + 1}
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                      <div>
-                        <span className="text-[10px] text-zinc-500 uppercase block mb-1 font-sans">
-                          Input:
-                        </span>
-                        <pre className="p-2 bg-zinc-950 rounded border border-zinc-800/80 overflow-x-auto text-zinc-200">
-                          {tc.inputData || "(empty)"}
-                        </pre>
+                {publicTestCases.map(
+                  (tc: CodingTestCaseDetails, tcIdx: number) => (
+                    <div
+                      key={tc.id || `tc-${tcIdx}`}
+                      className="border border-zinc-800/80 rounded-lg p-3 bg-zinc-900/40 space-y-2 text-xs font-mono"
+                    >
+                      <div className="text-zinc-400 font-semibold border-b border-zinc-800/60 pb-1.5 text-[11px]">
+                        Sample Case #{tc.displayOrder ?? tcIdx + 1}
                       </div>
-                      <div>
-                        <span className="text-[10px] text-zinc-500 uppercase block mb-1 font-sans">
-                          Expected Output:
-                        </span>
-                        <pre className="p-2 bg-zinc-950 rounded border border-zinc-800/80 overflow-x-auto text-zinc-200">
-                          {tc.expectedOutput || "(empty)"}
-                        </pre>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        <div>
+                          <span className="text-[10px] text-zinc-500 uppercase block mb-1 font-sans">
+                            Input:
+                          </span>
+                          <pre className="p-2 bg-zinc-950 rounded border border-zinc-800/80 overflow-x-auto text-zinc-200">
+                            {tc.inputData || "(empty)"}
+                          </pre>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-zinc-500 uppercase block mb-1 font-sans">
+                            Expected Output:
+                          </span>
+                          <pre className="p-2 bg-zinc-950 rounded border border-zinc-800/80 overflow-x-auto text-zinc-200">
+                            {tc.expectedOutput || "(empty)"}
+                          </pre>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ),
+                )}
               </div>
             </div>
           )}
@@ -313,14 +332,20 @@ export function CodingLesson({ codingData }: CodingLessonProps) {
                 </span>
                 <Select
                   value={language}
-                  onValueChange={(val) => handleLanguageChange(val as ProgrammingLanguage)}
+                  onValueChange={(val) =>
+                    handleLanguageChange(val as ProgrammingLanguage)
+                  }
                 >
                   <SelectTrigger className="w-[150px] h-8 bg-zinc-950 border-zinc-800 text-xs text-zinc-200 focus:ring-1 focus:ring-zinc-700">
                     <SelectValue placeholder="Select Language" />
                   </SelectTrigger>
                   <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-200">
                     {Object.values(ProgrammingLanguage).map((lang) => (
-                      <SelectItem key={lang} value={lang} className="text-xs hover:bg-zinc-800 focus:bg-zinc-800 cursor-pointer">
+                      <SelectItem
+                        key={lang}
+                        value={lang}
+                        className="text-xs hover:bg-zinc-800 focus:bg-zinc-800 cursor-pointer"
+                      >
                         {lang}
                       </SelectItem>
                     ))}
@@ -371,21 +396,36 @@ export function CodingLesson({ codingData }: CodingLessonProps) {
 
           {/* Bottom Tabs: Testcases, Execution Output & My Submissions */}
           <div className="border border-zinc-800/80 rounded-xl bg-zinc-950 p-3 sm:p-4 shadow-xl">
-            <Tabs value={activeBottomTab} onValueChange={setActiveBottomTab} className="w-full">
+            <Tabs
+              value={activeBottomTab}
+              onValueChange={setActiveBottomTab}
+              className="w-full"
+            >
               <TabsList className="grid w-full grid-cols-3 bg-zinc-900 border border-zinc-800/80 p-1">
-                <TabsTrigger value="testcases" className="text-xs flex items-center gap-1.5 data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100">
-                  <Terminal className="w-3.5 h-3.5" /> 
+                <TabsTrigger
+                  value="testcases"
+                  className="text-xs flex items-center gap-1.5 data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100"
+                >
+                  <Terminal className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">Sample Cases</span>
                   <span className="sm:hidden">Cases</span>
                 </TabsTrigger>
-                <TabsTrigger value="results" className="text-xs flex items-center gap-1.5 data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100">
-                  <Code className="w-3.5 h-3.5" /> 
+                <TabsTrigger
+                  value="results"
+                  className="text-xs flex items-center gap-1.5 data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100"
+                >
+                  <Code className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">Output & Execution</span>
                   <span className="sm:hidden">Output</span>
                 </TabsTrigger>
-                <TabsTrigger value="history" className="text-xs flex items-center gap-1.5 data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100">
-                  <History className="w-3.5 h-3.5" /> 
-                  <span className="hidden sm:inline">Submissions ({submissions.length})</span>
+                <TabsTrigger
+                  value="history"
+                  className="text-xs flex items-center gap-1.5 data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100"
+                >
+                  <History className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">
+                    Submissions ({submissions.length})
+                  </span>
                   <span className="sm:hidden">History</span>
                 </TabsTrigger>
               </TabsList>
@@ -394,34 +434,36 @@ export function CodingLesson({ codingData }: CodingLessonProps) {
               <TabsContent value="testcases" className="space-y-3 pt-3">
                 {publicTestCases.length > 0 ? (
                   <div className="space-y-3">
-                    {publicTestCases.map((tc: CodingTestCaseDetails, tcIdx: number) => (
-                      <div
-                        key={tc.id || `tc-${tcIdx}`}
-                        className="border border-zinc-800/80 rounded-lg p-3 bg-zinc-900/40 space-y-2 text-xs font-mono"
-                      >
-                        <div className="border-b border-zinc-800/60 pb-1.5 font-semibold text-zinc-300">
-                          Sample Case #{tc.displayOrder ?? tcIdx + 1}
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
-                          <div>
-                            <span className="text-[10px] text-zinc-500 uppercase block mb-1 font-sans">
-                              Input:
-                            </span>
-                            <pre className="p-2 bg-zinc-950 rounded border border-zinc-800/80 overflow-x-auto text-zinc-200">
-                              {tc.inputData || "(empty)"}
-                            </pre>
+                    {publicTestCases.map(
+                      (tc: CodingTestCaseDetails, tcIdx: number) => (
+                        <div
+                          key={tc.id || `tc-${tcIdx}`}
+                          className="border border-zinc-800/80 rounded-lg p-3 bg-zinc-900/40 space-y-2 text-xs font-mono"
+                        >
+                          <div className="border-b border-zinc-800/60 pb-1.5 font-semibold text-zinc-300">
+                            Sample Case #{tc.displayOrder ?? tcIdx + 1}
                           </div>
-                          <div>
-                            <span className="text-[10px] text-zinc-500 uppercase block mb-1 font-sans">
-                              Expected Output:
-                            </span>
-                            <pre className="p-2 bg-zinc-950 rounded border border-zinc-800/80 overflow-x-auto text-zinc-200">
-                              {tc.expectedOutput || "(empty)"}
-                            </pre>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                            <div>
+                              <span className="text-[10px] text-zinc-500 uppercase block mb-1 font-sans">
+                                Input:
+                              </span>
+                              <pre className="p-2 bg-zinc-950 rounded border border-zinc-800/80 overflow-x-auto text-zinc-200">
+                                {tc.inputData || "(empty)"}
+                              </pre>
+                            </div>
+                            <div>
+                              <span className="text-[10px] text-zinc-500 uppercase block mb-1 font-sans">
+                                Expected Output:
+                              </span>
+                              <pre className="p-2 bg-zinc-950 rounded border border-zinc-800/80 overflow-x-auto text-zinc-200">
+                                {tc.expectedOutput || "(empty)"}
+                              </pre>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ),
+                    )}
                   </div>
                 ) : (
                   <p className="text-xs text-zinc-500 p-6 text-center border border-zinc-800/60 rounded-lg">
@@ -450,7 +492,10 @@ export function CodingLesson({ codingData }: CodingLessonProps) {
                         {renderStatusBadge(runResult.status)}
                       </div>
                       <div className="flex items-center gap-3 text-xs text-zinc-400 font-mono">
-                        <span>Passed: {runResult.passedTestCasesCount} / {runResult.totalTestCases}</span>
+                        <span>
+                          Passed: {runResult.passedTestCasesCount} /{" "}
+                          {runResult.totalTestCases}
+                        </span>
                         <span>Time: {runResult.runtimeMs} ms</span>
                         <span>Memory: {runResult.memoryUsedKb} KB</span>
                       </div>
@@ -468,7 +513,9 @@ export function CodingLesson({ codingData }: CodingLessonProps) {
                           }`}
                         >
                           <div className="flex items-center justify-between">
-                            <span className="font-semibold text-zinc-300">Test Case #{idx + 1}</span>
+                            <span className="font-semibold text-zinc-300">
+                              Test Case #{idx + 1}
+                            </span>
                             {tc.passed ? (
                               <span className="text-emerald-400 font-semibold flex items-center gap-1">
                                 <CheckCircle2 className="w-3.5 h-3.5" /> Passed
@@ -481,12 +528,20 @@ export function CodingLesson({ codingData }: CodingLessonProps) {
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1">
                             <div>
-                              <span className="text-[10px] text-zinc-500 uppercase block font-sans">Expected Output:</span>
-                              <pre className="p-1.5 bg-zinc-950 rounded border border-zinc-800 mt-0.5 text-zinc-200">{tc.expectedOutput || "(empty)"}</pre>
+                              <span className="text-[10px] text-zinc-500 uppercase block font-sans">
+                                Expected Output:
+                              </span>
+                              <pre className="p-1.5 bg-zinc-950 rounded border border-zinc-800 mt-0.5 text-zinc-200">
+                                {tc.expectedOutput || "(empty)"}
+                              </pre>
                             </div>
                             <div>
-                              <span className="text-[10px] text-zinc-500 uppercase block font-sans">Your Output:</span>
-                              <pre className="p-1.5 bg-zinc-950 rounded border border-zinc-800 mt-0.5 text-zinc-200">{tc.actualOutput || "(empty)"}</pre>
+                              <span className="text-[10px] text-zinc-500 uppercase block font-sans">
+                                Your Output:
+                              </span>
+                              <pre className="p-1.5 bg-zinc-950 rounded border border-zinc-800 mt-0.5 text-zinc-200">
+                                {tc.actualOutput || "(empty)"}
+                              </pre>
                             </div>
                           </div>
                         </div>
@@ -506,22 +561,31 @@ export function CodingLesson({ codingData }: CodingLessonProps) {
                         {renderStatusBadge(submitResult.status)}
                       </div>
                       <span className="text-xs text-zinc-500">
-                        {new Date(submitResult.submittedAt).toLocaleTimeString()}
+                        {new Date(
+                          submitResult.submittedAt,
+                        ).toLocaleTimeString()}
                       </span>
                     </div>
                     <div className="p-3 bg-zinc-950 rounded-md border border-zinc-800 text-xs font-mono text-zinc-300 space-y-1">
-                      <div>Passed Test Cases: {submitResult.passedTestCasesCount} / {submitResult.totalTestCases}</div>
+                      <div>
+                        Passed Test Cases: {submitResult.passedTestCasesCount} /{" "}
+                        {submitResult.totalTestCases}
+                      </div>
                       <div>Runtime: {submitResult.runtimeMs} ms</div>
                       <div>Memory Used: {submitResult.memoryUsedKb} KB</div>
                     </div>
                   </div>
                 )}
 
-                {!runMutation.isPending && !submitMutation.isPending && !runResult && !submitResult && (
-                  <p className="text-xs text-zinc-500 p-6 text-center border border-zinc-800/60 rounded-lg">
-                    Click &quot;Run Code&quot; to test against public test cases or &quot;Submit Solution&quot; for full evaluation.
-                  </p>
-                )}
+                {!runMutation.isPending &&
+                  !submitMutation.isPending &&
+                  !runResult &&
+                  !submitResult && (
+                    <p className="text-xs text-zinc-500 p-6 text-center border border-zinc-800/60 rounded-lg">
+                      Click &quot;Run Code&quot; to test against public test
+                      cases or &quot;Submit Solution&quot; for full evaluation.
+                    </p>
+                  )}
               </TabsContent>
 
               {/* Tab 3: My Submissions History */}
@@ -549,8 +613,13 @@ export function CodingLesson({ codingData }: CodingLessonProps) {
                           </div>
                         </div>
                         <div className="text-right text-[11px] text-zinc-500 space-y-1">
-                          <div>{new Date(sub.submittedAt).toLocaleDateString()} {new Date(sub.submittedAt).toLocaleTimeString()}</div>
-                          <div className="font-mono text-zinc-400">{sub.runtimeMs ?? 0} ms | {sub.memoryUsedKb ?? 0} KB</div>
+                          <div>
+                            {new Date(sub.submittedAt).toLocaleDateString()}{" "}
+                            {new Date(sub.submittedAt).toLocaleTimeString()}
+                          </div>
+                          <div className="font-mono text-zinc-400">
+                            {sub.runtimeMs ?? 0} ms | {sub.memoryUsedKb ?? 0} KB
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -564,7 +633,6 @@ export function CodingLesson({ codingData }: CodingLessonProps) {
             </Tabs>
           </div>
         </div>
-
       </div>
     </div>
   );

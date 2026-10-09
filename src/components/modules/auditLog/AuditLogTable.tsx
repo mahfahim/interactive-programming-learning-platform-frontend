@@ -1,24 +1,38 @@
-import { useState } from "react";
 import { format } from "date-fns";
 import {
-  Search,
-  Eye,
+  ArrowUpDown,
   ChevronLeft,
   ChevronRight,
-  RotateCcw,
-  User,
-  Shield,
   Clock,
-  ArrowUpDown,
+  Eye,
   FileText,
   Globe,
+  RotateCcw,
+  Search,
+  Shield,
   Terminal,
+  User,
 } from "lucide-react";
-
-// Types matching your setup
-import type { IAuditLogFilterQuery } from "@/types";
-import { useAuditLogs } from "@/hooks/auditLog.hook";
-
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 // UI Component primitives (shadcn/ui style)
 import {
   Table,
@@ -28,26 +42,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useAuditLogs } from "@/hooks/auditLog.hook";
+// Types matching your setup
+import type { IAuditLogFilterQuery } from "@/types";
 
 // Interface for Audit Log record returned from API
 export interface AuditLogRecord {
@@ -72,13 +70,40 @@ export interface AuditLogRecord {
   createdAt: string;
 }
 
-const ACTION_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  CREATE: { bg: "bg-emerald-500/10", text: "text-emerald-700 dark:text-emerald-400", border: "border-emerald-500/20" },
-  UPDATE: { bg: "bg-amber-500/10", text: "text-amber-700 dark:text-amber-400", border: "border-amber-500/20" },
-  DELETE: { bg: "bg-rose-500/10", text: "text-rose-700 dark:text-rose-400", border: "border-rose-500/20" },
-  READ: { bg: "bg-blue-500/10", text: "text-blue-700 dark:text-blue-400", border: "border-blue-500/20" },
-  LOGIN: { bg: "bg-purple-500/10", text: "text-purple-700 dark:text-purple-400", border: "border-purple-500/20" },
-  LOGOUT: { bg: "bg-slate-500/10", text: "text-slate-700 dark:text-slate-400", border: "border-slate-500/20" },
+const ACTION_COLORS: Record<
+  string,
+  { bg: string; text: string; border: string }
+> = {
+  CREATE: {
+    bg: "bg-emerald-500/10",
+    text: "text-emerald-700 dark:text-emerald-400",
+    border: "border-emerald-500/20",
+  },
+  UPDATE: {
+    bg: "bg-amber-500/10",
+    text: "text-amber-700 dark:text-amber-400",
+    border: "border-amber-500/20",
+  },
+  DELETE: {
+    bg: "bg-rose-500/10",
+    text: "text-rose-700 dark:text-rose-400",
+    border: "border-rose-500/20",
+  },
+  READ: {
+    bg: "bg-blue-500/10",
+    text: "text-blue-700 dark:text-blue-400",
+    border: "border-blue-500/20",
+  },
+  LOGIN: {
+    bg: "bg-purple-500/10",
+    text: "text-purple-700 dark:text-purple-400",
+    border: "border-purple-500/20",
+  },
+  LOGOUT: {
+    bg: "bg-slate-500/10",
+    text: "text-slate-700 dark:text-slate-400",
+    border: "border-slate-500/20",
+  },
 };
 
 const SKELETON_ROWS = ["skel-1", "skel-2", "skel-3", "skel-4", "skel-5"];
@@ -91,22 +116,35 @@ function ActionBadge({ action }: { action: string }) {
   };
 
   return (
-    <Badge variant="outline" className={`${style.bg} ${style.text} ${style.border} font-semibold px-2.5 py-0.5 rounded-md`}>
+    <Badge
+      variant="outline"
+      className={`${style.bg} ${style.text} ${style.border} font-semibold px-2.5 py-0.5 rounded-md`}
+    >
       {action}
     </Badge>
   );
 }
 
-function JsonViewer({ title, data }: { title: string; data?: Record<string, unknown> | null }) {
+function JsonViewer({
+  title,
+  data,
+}: {
+  title: string;
+  data?: Record<string, unknown> | null;
+}) {
   return (
     <div className="flex flex-col gap-2 rounded-lg border bg-muted/40 p-3">
-      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{title}</span>
+      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+        {title}
+      </span>
       {data && Object.keys(data).length > 0 ? (
         <pre className="max-h-60 overflow-auto rounded bg-background p-3 text-xs font-mono text-foreground border">
           {JSON.stringify(data, null, 2)}
         </pre>
       ) : (
-        <p className="text-xs italic text-muted-foreground py-2">No {title.toLowerCase()} recorded</p>
+        <p className="text-xs italic text-muted-foreground py-2">
+          No {title.toLowerCase()} recorded
+        </p>
       )}
     </div>
   );
@@ -128,9 +166,17 @@ export function AuditLogsTable() {
     ? (response.data as AuditLogRecord[])
     : [];
 
-  const meta = response?.meta || { page: 1, limit: 20, total: 0, totalPages: 1 };
+  const meta = response?.meta || {
+    page: 1,
+    limit: 20,
+    total: 0,
+    totalPages: 1,
+  };
 
-  const handleFilterChange = (key: keyof IAuditLogFilterQuery, value: unknown) => {
+  const handleFilterChange = (
+    key: keyof IAuditLogFilterQuery,
+    value: unknown,
+  ) => {
     setFilters((prev) => ({
       ...prev,
       [key]: value || undefined,
@@ -167,7 +213,12 @@ export function AuditLogsTable() {
             Track, inspect, and audit all system operations and user activities.
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => refetch()} className="self-start sm:self-auto gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => refetch()}
+          className="self-start sm:self-auto gap-2"
+        >
           <RotateCcw className="h-4 w-4" /> Refresh
         </Button>
       </div>
@@ -178,7 +229,10 @@ export function AuditLogsTable() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
             {/* Entity Type Input */}
             <div className="space-y-1.5">
-              <label htmlFor="filter-entity-type" className="text-xs font-medium text-muted-foreground">
+              <label
+                htmlFor="filter-entity-type"
+                className="text-xs font-medium text-muted-foreground"
+              >
                 Entity Type
               </label>
               <div className="relative">
@@ -187,7 +241,9 @@ export function AuditLogsTable() {
                   id="filter-entity-type"
                   placeholder="e.g. User, Order"
                   value={filters.entityType || ""}
-                  onChange={(e) => handleFilterChange("entityType", e.target.value)}
+                  onChange={(e) =>
+                    handleFilterChange("entityType", e.target.value)
+                  }
                   className="pl-8 h-9 text-xs"
                 />
               </div>
@@ -195,7 +251,10 @@ export function AuditLogsTable() {
 
             {/* Entity ID Input */}
             <div className="space-y-1.5">
-              <label htmlFor="filter-entity-id" className="text-xs font-medium text-muted-foreground">
+              <label
+                htmlFor="filter-entity-id"
+                className="text-xs font-medium text-muted-foreground"
+              >
                 Entity ID
               </label>
               <Input
@@ -209,12 +268,17 @@ export function AuditLogsTable() {
 
             {/* Action Select */}
             <div className="space-y-1.5">
-              <label htmlFor="filter-action" className="text-xs font-medium text-muted-foreground">
+              <label
+                htmlFor="filter-action"
+                className="text-xs font-medium text-muted-foreground"
+              >
                 Action
               </label>
               <Select
                 value={filters.action || "ALL"}
-                onValueChange={(val) => handleFilterChange("action", val === "ALL" ? undefined : val)}
+                onValueChange={(val) =>
+                  handleFilterChange("action", val === "ALL" ? undefined : val)
+                }
               >
                 <SelectTrigger id="filter-action" className="h-9 text-xs">
                   <SelectValue placeholder="All Actions" />
@@ -233,7 +297,10 @@ export function AuditLogsTable() {
 
             {/* Actor ID Input */}
             <div className="space-y-1.5">
-              <label htmlFor="filter-actor-id" className="text-xs font-medium text-muted-foreground">
+              <label
+                htmlFor="filter-actor-id"
+                className="text-xs font-medium text-muted-foreground"
+              >
                 Actor ID
               </label>
               <Input
@@ -247,21 +314,29 @@ export function AuditLogsTable() {
 
             {/* Start Date Input */}
             <div className="space-y-1.5">
-              <label htmlFor="filter-start-date" className="text-xs font-medium text-muted-foreground">
+              <label
+                htmlFor="filter-start-date"
+                className="text-xs font-medium text-muted-foreground"
+              >
                 Start Date
               </label>
               <Input
                 id="filter-start-date"
                 type="date"
                 value={filters.startDate || ""}
-                onChange={(e) => handleFilterChange("startDate", e.target.value)}
+                onChange={(e) =>
+                  handleFilterChange("startDate", e.target.value)
+                }
                 className="h-9 text-xs"
               />
             </div>
 
             {/* End Date Input */}
             <div className="space-y-1.5">
-              <label htmlFor="filter-end-date" className="text-xs font-medium text-muted-foreground">
+              <label
+                htmlFor="filter-end-date"
+                className="text-xs font-medium text-muted-foreground"
+              >
                 End Date
               </label>
               <Input
@@ -286,7 +361,12 @@ export function AuditLogsTable() {
                 Sort: {filters.sortBy} ({filters.sortOrder?.toUpperCase()})
               </Button>
             </div>
-            <Button variant="outline" size="sm" onClick={handleResetFilters} className="h-8 text-xs gap-1 text-muted-foreground">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleResetFilters}
+              className="h-8 text-xs gap-1 text-muted-foreground"
+            >
               Clear Filters
             </Button>
           </div>
@@ -310,29 +390,50 @@ export function AuditLogsTable() {
             {isLoading ? (
               SKELETON_ROWS.map((key) => (
                 <TableRow key={key}>
-                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                  <TableCell><Skeleton className="h-6 w-16" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-28" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-48" /></TableCell>
-                  <TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-32" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-6 w-16" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-24" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-28" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-48" />
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Skeleton className="h-8 w-8 ml-auto" />
+                  </TableCell>
                 </TableRow>
               ))
             ) : isError ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-32 text-center text-destructive">
+                <TableCell
+                  colSpan={6}
+                  className="h-32 text-center text-destructive"
+                >
                   Failed to load audit logs. Please try again.
                 </TableCell>
               </TableRow>
             ) : logs.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
+                <TableCell
+                  colSpan={6}
+                  className="h-32 text-center text-muted-foreground"
+                >
                   No audit logs found matching the selected criteria.
                 </TableCell>
               </TableRow>
             ) : (
               logs.map((log) => (
-                <TableRow key={log.id} className="hover:bg-muted/40 transition-colors">
+                <TableRow
+                  key={log.id}
+                  className="hover:bg-muted/40 transition-colors"
+                >
                   <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">
                     <div className="flex items-center gap-1.5">
                       <Clock className="h-3.5 w-3.5 text-muted-foreground/70" />
@@ -344,7 +445,9 @@ export function AuditLogsTable() {
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col">
-                      <span className="font-medium text-xs text-foreground">{log.entityType}</span>
+                      <span className="font-medium text-xs text-foreground">
+                        {log.entityType}
+                      </span>
                       {log.entityId && (
                         <span className="text-[10px] font-mono text-muted-foreground truncate max-w-30">
                           ID: {log.entityId}
@@ -355,11 +458,17 @@ export function AuditLogsTable() {
                   <TableCell>
                     {log.actor ? (
                       <div className="flex flex-col">
-                        <span className="text-xs font-medium text-foreground">{log.actor.name}</span>
-                        <span className="text-[10px] text-muted-foreground">{log.actor.email}</span>
+                        <span className="text-xs font-medium text-foreground">
+                          {log.actor.name}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">
+                          {log.actor.email}
+                        </span>
                       </div>
                     ) : (
-                      <span className="text-xs text-muted-foreground italic">System / Anonymous</span>
+                      <span className="text-xs text-muted-foreground italic">
+                        System / Anonymous
+                      </span>
                     )}
                   </TableCell>
                   <TableCell className="text-xs text-foreground max-w-xs truncate">
@@ -384,7 +493,9 @@ export function AuditLogsTable() {
         {/* Pagination Footer */}
         <div className="flex items-center justify-between px-4 py-3 border-t bg-muted/20">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <label htmlFor="rows-per-page-select" className="sr-only">Rows per page</label>
+            <label htmlFor="rows-per-page-select" className="sr-only">
+              Rows per page
+            </label>
             <span>Rows per page:</span>
             <Select
               value={String(filters.limit || 20)}
@@ -401,8 +512,9 @@ export function AuditLogsTable() {
               </SelectContent>
             </Select>
             <span className="hidden sm:inline">
-              Showing {logs.length > 0 ? (meta.page - 1) * meta.limit + 1 : 0} to{" "}
-              {Math.min(meta.page * meta.limit, meta.total)} of {meta.total} entries
+              Showing {logs.length > 0 ? (meta.page - 1) * meta.limit + 1 : 0}{" "}
+              to {Math.min(meta.page * meta.limit, meta.total)} of {meta.total}{" "}
+              entries
             </span>
           </div>
 
@@ -433,7 +545,10 @@ export function AuditLogsTable() {
       </div>
 
       {/* Audit Log Detail Dialog */}
-      <Dialog open={!!selectedLog} onOpenChange={(open) => !open && setSelectedLog(null)}>
+      <Dialog
+        open={!!selectedLog}
+        onOpenChange={(open) => !open && setSelectedLog(null)}
+      >
         {selectedLog && (
           <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
             <DialogHeader>
@@ -468,7 +583,10 @@ export function AuditLogsTable() {
                     <Clock className="h-3 w-3" /> Created At
                   </span>
                   <p className="text-xs font-semibold mt-1">
-                    {format(new Date(selectedLog.createdAt), "yyyy-MM-dd HH:mm:ss")}
+                    {format(
+                      new Date(selectedLog.createdAt),
+                      "yyyy-MM-dd HH:mm:ss",
+                    )}
                   </p>
                 </div>
 
@@ -484,7 +602,9 @@ export function AuditLogsTable() {
 
               {/* Description */}
               <div className="space-y-1">
-                <span className="text-xs font-medium text-muted-foreground">Description</span>
+                <span className="text-xs font-medium text-muted-foreground">
+                  Description
+                </span>
                 <p className="text-sm rounded-md bg-muted/30 border p-3 text-foreground">
                   {selectedLog.description}
                 </p>
@@ -503,8 +623,14 @@ export function AuditLogsTable() {
 
                 <TabsContent value="diff" className="mt-4 space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <JsonViewer title="Old Values" data={selectedLog.oldValues} />
-                    <JsonViewer title="New Values" data={selectedLog.newValues} />
+                    <JsonViewer
+                      title="Old Values"
+                      data={selectedLog.oldValues}
+                    />
+                    <JsonViewer
+                      title="New Values"
+                      data={selectedLog.newValues}
+                    />
                   </div>
                 </TabsContent>
 
@@ -513,12 +639,21 @@ export function AuditLogsTable() {
 
                   <div className="space-y-2 rounded-lg border p-3 bg-muted/20 text-xs">
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-muted-foreground font-medium">Request ID</span>
-                      <span className="font-mono text-foreground">{selectedLog.requestId || "N/A"}</span>
+                      <span className="text-muted-foreground font-medium">
+                        Request ID
+                      </span>
+                      <span className="font-mono text-foreground">
+                        {selectedLog.requestId || "N/A"}
+                      </span>
                     </div>
                     <div className="flex justify-between pt-1">
-                      <span className="text-muted-foreground font-medium">User Agent</span>
-                      <span className="font-mono text-foreground truncate max-w-sm" title={selectedLog.userAgent || ""}>
+                      <span className="text-muted-foreground font-medium">
+                        User Agent
+                      </span>
+                      <span
+                        className="font-mono text-foreground truncate max-w-sm"
+                        title={selectedLog.userAgent || ""}
+                      >
                         {selectedLog.userAgent || "N/A"}
                       </span>
                     </div>

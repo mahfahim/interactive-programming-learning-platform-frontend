@@ -1,7 +1,5 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import Link from "next/link";
 import {
   AlertCircle,
   BookOpen,
@@ -15,11 +13,8 @@ import {
   PlayCircle,
   RefreshCw,
 } from "lucide-react";
-
-import { useGetModulesBySuperModule } from "@/hooks/module.hook";
-import type { IModule, ISuperModule } from "@/types";
-import { LessonType } from "@/types";
-
+import Link from "next/link";
+import { useMemo, useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -38,6 +33,9 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useGetModulesBySuperModule } from "@/hooks/module.hook";
+import type { IModule, ISuperModule } from "@/types";
+import { LessonType } from "@/types";
 
 interface StudentModuleListProps {
   superModuleId: string;

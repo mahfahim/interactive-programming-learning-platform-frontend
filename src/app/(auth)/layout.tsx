@@ -11,7 +11,7 @@ export default function AuthLayout({
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-background text-foreground">
       {/* Left Branding Panel (Desktop Only) */}
       <div className="hidden lg:flex flex-col justify-between bg-primary p-12 text-primary-foreground relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary to-primary-foreground/10 pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-br from-primary/90 via-primary to-primary-foreground/10 pointer-events-none" />
 
         {/* Desktop Branding with Home Link */}
         <Link
@@ -21,7 +21,9 @@ export default function AuthLayout({
           <div className="p-2.5 rounded-xl bg-primary-foreground/10 backdrop-blur border border-primary-foreground/20">
             <SquareCode className="h-7 w-7" />
           </div>
-          <span className="text-2xl font-bold tracking-tight">Code BD Code</span>
+          <span className="text-2xl font-bold tracking-tight">
+            Code BD Code
+          </span>
         </Link>
 
         <div className="relative z-10 space-y-4 max-w-lg">

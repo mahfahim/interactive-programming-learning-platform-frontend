@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useGetCourses, useGetMyCourses } from "@/hooks/course.hook";
-import { Role } from "@/types/enum.type";
 import type { ICourse } from "@/types";
 import type { CourseLevel } from "@/types/enum.type";
+import { Role } from "@/types/enum.type";
 import { CourseCard } from "./shared/CourseCard";
 import { CourseEmptyState } from "./shared/CourseEmptyState";
 import { CourseErrorState } from "./shared/CourseErrorState";
@@ -14,7 +14,7 @@ import { CourseSkeleton } from "./shared/CourseSkeleton";
 
 interface CourseListProps {
   detailUrlPrefix?: string;
-  role?: Role; 
+  role?: Role;
 }
 
 export function CourseList({
@@ -38,28 +38,18 @@ export function CourseList({
 
   const isInstructor = role === Role.INSTRUCTOR;
 
-  
   const adminQuery = useGetCourses(queryParams, {
-    enabled: !isInstructor, 
+    enabled: !isInstructor,
   });
 
-  
   const instructorQuery = useGetMyCourses({
-    enabled: isInstructor, 
+    enabled: isInstructor,
   });
 
-  
   const activeQuery = isInstructor ? instructorQuery : adminQuery;
 
-  const {
-    data: response,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = activeQuery;
+  const { data: response, isLoading, isError, error, refetch } = activeQuery;
 
-  
   const courses = (response?.data as unknown as ICourse[]) || [];
   const meta = response?.meta;
 

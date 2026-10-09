@@ -1,22 +1,16 @@
 "use client";
 
-import React from "react";
+import { AlertCircle, Award, BookOpen, PlayCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useGetMyEnrolledCourses } from "@/hooks/enrollment.hook";
-import { BookOpen, PlayCircle, Award, AlertCircle } from "lucide-react";
-
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardTitle,
-} from "@/components/ui/card";
+import React from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useGetMyEnrolledCourses } from "@/hooks/enrollment.hook";
 
 interface EnrolledCourseItem {
   enrollmentId: string;
@@ -145,7 +139,9 @@ export const MyEnrolledCourses = () => {
             <Button asChild className="w-full gap-2">
               <Link href={`/learn/${item.course.slug}`}>
                 <PlayCircle className="h-4 w-4" />
-                {item.progressPercentage > 0 ? "Continue Learning" : "Start Course"}
+                {item.progressPercentage > 0
+                  ? "Continue Learning"
+                  : "Start Course"}
               </Link>
             </Button>
           </CardFooter>

@@ -1,23 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { useGetAllPayments } from "@/hooks/payment.hook";
-
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  MoreVertical,
+  RotateCcw,
+  Search,
+} from "lucide-react";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -26,20 +26,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  ChevronLeft,
-  ChevronRight,
-  MoreVertical,
-  RotateCcw,
-  Eye,
-  Search,
-} from "lucide-react";
-
-import { RefundDialog } from "./RefundDialog";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useGetAllPayments } from "@/hooks/payment.hook";
 import { PaymentDetailsModal } from "./PaymentDetailsModal";
+import { RefundDialog } from "./RefundDialog";
 
 // Static keys for skeleton items to avoid array index key warnings
 const SKELETON_KEYS = ["sk-1", "sk-2", "sk-3", "sk-4", "sk-5"];
@@ -68,13 +66,29 @@ export function AdminPaymentManagement() {
   const renderStatus = (status: string) => {
     switch (status) {
       case "COMPLETED":
-        return <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-200">Completed</Badge>;
+        return (
+          <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-200">
+            Completed
+          </Badge>
+        );
       case "REFUNDED":
-        return <Badge className="bg-purple-500/10 text-purple-600 border-purple-200">Refunded</Badge>;
+        return (
+          <Badge className="bg-purple-500/10 text-purple-600 border-purple-200">
+            Refunded
+          </Badge>
+        );
       case "PENDING":
-        return <Badge className="bg-amber-500/10 text-amber-600 border-amber-200">Pending</Badge>;
+        return (
+          <Badge className="bg-amber-500/10 text-amber-600 border-amber-200">
+            Pending
+          </Badge>
+        );
       case "FAILED":
-        return <Badge className="bg-red-500/10 text-red-600 border-red-200">Failed</Badge>;
+        return (
+          <Badge className="bg-red-500/10 text-red-600 border-red-200">
+            Failed
+          </Badge>
+        );
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -83,7 +97,9 @@ export function AdminPaymentManagement() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-xl font-bold">Transactions & Payments</CardTitle>
+        <CardTitle className="text-xl font-bold">
+          Transactions & Payments
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Filters */}
@@ -138,18 +154,35 @@ export function AdminPaymentManagement() {
               {isLoading ? (
                 SKELETON_KEYS.map((skKey) => (
                   <TableRow key={skKey}>
-                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-40" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-16" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-20" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-20" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Skeleton className="h-8 w-8 ml-auto" />
+                    </TableCell>
                   </TableRow>
                 ))
               ) : payments.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                  <TableCell
+                    colSpan={7}
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     No transactions found.
                   </TableCell>
                 </TableRow>
@@ -157,14 +190,26 @@ export function AdminPaymentManagement() {
                 payments.map((payment: any) => (
                   <TableRow key={payment.id}>
                     <TableCell>
-                      <p className="font-medium">{payment.user?.name || "N/A"}</p>
-                      <p className="text-xs text-muted-foreground">{payment.user?.email}</p>
+                      <p className="font-medium">
+                        {payment.user?.name || "N/A"}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {payment.user?.email}
+                      </p>
                     </TableCell>
-                    <TableCell className="max-w-50 truncate">{payment.course?.title}</TableCell>
-                    <TableCell className="font-semibold">৳{payment.amount}</TableCell>
-                    <TableCell className="uppercase text-xs">{payment.paymentGateway}</TableCell>
+                    <TableCell className="max-w-50 truncate">
+                      {payment.course?.title}
+                    </TableCell>
+                    <TableCell className="font-semibold">
+                      ৳{payment.amount}
+                    </TableCell>
+                    <TableCell className="uppercase text-xs">
+                      {payment.paymentGateway}
+                    </TableCell>
                     <TableCell>{renderStatus(payment.status)}</TableCell>
-                    <TableCell className="text-xs">{new Date(payment.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell className="text-xs">
+                      {new Date(payment.createdAt).toLocaleDateString()}
+                    </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -173,7 +218,9 @@ export function AdminPaymentManagement() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => setViewPaymentId(payment.id)}>
+                          <DropdownMenuItem
+                            onClick={() => setViewPaymentId(payment.id)}
+                          >
                             <Eye className="mr-2 h-4 w-4" /> View Details
                           </DropdownMenuItem>
                           {payment.status === "COMPLETED" && (
@@ -181,7 +228,8 @@ export function AdminPaymentManagement() {
                               className="text-destructive focus:text-destructive"
                               onClick={() => setRefundPaymentId(payment.id)}
                             >
-                              <RotateCcw className="mr-2 h-4 w-4" /> Refund Payment
+                              <RotateCcw className="mr-2 h-4 w-4" /> Refund
+                              Payment
                             </DropdownMenuItem>
                           )}
                         </DropdownMenuContent>

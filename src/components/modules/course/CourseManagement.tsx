@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, Edit, Trash2, Plus, Layers } from "lucide-react";
+import { Edit, Eye, Layers, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -26,7 +26,7 @@ import {
   useGetMyCourses,
 } from "@/hooks/course.hook";
 import type { ICourse, ICreateCourseInput } from "@/types";
-import { Role, type CourseLevel } from "@/types/enum.type";
+import { type CourseLevel, Role } from "@/types/enum.type";
 
 interface AdminCourseManagementProps {
   role?: Role.ADMIN | Role.INSTRUCTOR;
@@ -61,7 +61,6 @@ export function AdminCourseManagement({
     limit: 8,
   };
 
-  
   const generalQuery = useGetCourses(queryParams, {
     enabled: isAdmin,
   });
@@ -74,7 +73,6 @@ export function AdminCourseManagement({
     ? instructorQuery
     : generalQuery;
 
-  
   const createCourseMutation = useCreateCourse({
     onSuccess: (res) => {
       const isSuccess = res?.success ?? true;

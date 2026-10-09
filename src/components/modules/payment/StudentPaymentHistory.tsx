@@ -1,8 +1,11 @@
 "use client";
 
+import { ChevronLeft, ChevronRight, CreditCard, Eye } from "lucide-react";
 import { useState } from "react";
-import { useGetMyPayments } from "@/hooks/payment.hook";
-
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -11,11 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ChevronLeft, ChevronRight, Eye, CreditCard } from "lucide-react";
+import { useGetMyPayments } from "@/hooks/payment.hook";
 import { PaymentDetailsModal } from "./PaymentDetailsModal";
 
 // Static keys for skeleton items to satisfy Biome noArrayIndexKey rule
@@ -35,7 +34,9 @@ interface IPaymentItem {
 
 export function StudentPaymentHistory() {
   const [page, setPage] = useState(1);
-  const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>(null);
+  const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>(
+    null,
+  );
 
   const queryParams = {
     page: page.toString(),
@@ -44,15 +45,25 @@ export function StudentPaymentHistory() {
 
   const { data: response, isLoading } = useGetMyPayments(queryParams);
 
-  const payments: IPaymentItem[] = Array.isArray(response?.data) ? response.data : [];
+  const payments: IPaymentItem[] = Array.isArray(response?.data)
+    ? response.data
+    : [];
   const meta = response?.meta;
 
   const renderStatus = (status: string) => {
     switch (status) {
       case "COMPLETED":
-        return <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-200">Completed</Badge>;
+        return (
+          <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-200">
+            Completed
+          </Badge>
+        );
       case "REFUNDED":
-        return <Badge className="bg-purple-500/10 text-purple-600 border-purple-200">Refunded</Badge>;
+        return (
+          <Badge className="bg-purple-500/10 text-purple-600 border-purple-200">
+            Refunded
+          </Badge>
+        );
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -82,28 +93,49 @@ export function StudentPaymentHistory() {
               {isLoading ? (
                 SKELETON_KEYS.map((skKey) => (
                   <TableRow key={skKey}>
-                    <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-40" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-16" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-20" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-20" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Skeleton className="h-8 w-8 ml-auto" />
+                    </TableCell>
                   </TableRow>
                 ))
               ) : payments.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                  <TableCell
+                    colSpan={6}
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     No payment history found.
                   </TableCell>
                 </TableRow>
               ) : (
                 payments.map((payment) => (
                   <TableRow key={payment.id}>
-                    <TableCell className="font-medium">{payment.course?.title || "N/A"}</TableCell>
+                    <TableCell className="font-medium">
+                      {payment.course?.title || "N/A"}
+                    </TableCell>
                     <TableCell>৳{payment.amount}</TableCell>
-                    <TableCell className="uppercase">{payment.paymentGateway || "N/A"}</TableCell>
+                    <TableCell className="uppercase">
+                      {payment.paymentGateway || "N/A"}
+                    </TableCell>
                     <TableCell>{renderStatus(payment.status)}</TableCell>
-                    <TableCell>{new Date(payment.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      {new Date(payment.createdAt).toLocaleDateString()}
+                    </TableCell>
                     <TableCell className="text-right">
                       <Button
                         variant="ghost"

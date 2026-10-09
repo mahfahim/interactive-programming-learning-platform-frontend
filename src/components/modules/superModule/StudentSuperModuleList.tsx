@@ -1,7 +1,5 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import Link from "next/link";
 import {
   AlertTriangle,
   BookOpen,
@@ -13,10 +11,8 @@ import {
   RefreshCw,
   Search,
 } from "lucide-react";
-
-import { useGetSuperModulesByCourse } from "@/hooks/superModule.hook";
-import type { ISuperModule } from "@/types";
-
+import Link from "next/link";
+import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -30,6 +26,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useGetSuperModulesByCourse } from "@/hooks/superModule.hook";
+import type { ISuperModule } from "@/types";
 
 interface StudentSuperModuleListProps {
   courseId: string;
@@ -88,11 +86,7 @@ export function StudentSuperModuleList({
       ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredSuperModules.map((sm) => (
-            <SuperModuleCard
-              key={sm.id}
-              superModule={sm}
-              courseId={courseId}
-            />
+            <SuperModuleCard key={sm.id} superModule={sm} courseId={courseId} />
           ))}
         </div>
       ) : (
@@ -404,7 +398,8 @@ function SuperModuleEmptyState() {
         No Super Modules Found
       </h3>
       <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-        The curriculum structure for this course is currently being prepared. Check back soon!
+        The curriculum structure for this course is currently being prepared.
+        Check back soon!
       </p>
     </div>
   );

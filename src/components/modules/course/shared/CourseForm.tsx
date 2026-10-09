@@ -119,7 +119,6 @@ export function CourseForm({
     }
   }, [initialData]);
 
-  
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
     setTitle(newTitle);

@@ -1,6 +1,6 @@
 // src/app/(dashboard)/student/payments/page.tsx
 
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { StudentPaymentHistory } from "@/components/modules/payment/StudentPaymentHistory";
 
 export const metadata: Metadata = {

@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { useEnrollCourse } from "@/hooks/enrollment.hook";
-import { Loader2, ShieldCheck, CreditCard, CheckCircle2 } from "lucide-react";
-
+import { CheckCircle2, CreditCard, Loader2, ShieldCheck } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -12,10 +13,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useEnrollCourse } from "@/hooks/enrollment.hook";
 
 interface EnrollmentModalProps {
   courseId: string;
@@ -32,10 +32,16 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const [paymentGateway, setPaymentGateway] = useState<"BKASH" | "SSLCOMMERZ">("SSLCOMMERZ");
+  const [paymentGateway, setPaymentGateway] = useState<"BKASH" | "SSLCOMMERZ">(
+    "SSLCOMMERZ",
+  );
   const isFree = !price || price <= 0;
 
-  const { mutate: enroll, isPending, error } = useEnrollCourse({
+  const {
+    mutate: enroll,
+    isPending,
+    error,
+  } = useEnrollCourse({
     onSuccess: (response) => {
       const data = response.data as {
         isPaidCourse: boolean;
@@ -91,7 +97,9 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
               <RadioGroup
                 value={paymentGateway}
-                onValueChange={(val) => setPaymentGateway(val as "BKASH" | "SSLCOMMERZ")}
+                onValueChange={(val) =>
+                  setPaymentGateway(val as "BKASH" | "SSLCOMMERZ")
+                }
                 className="space-y-2"
               >
                 <Label
@@ -103,7 +111,10 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <RadioGroupItem value="SSLCOMMERZ" id="gateway-sslcommerz" />
+                    <RadioGroupItem
+                      value="SSLCOMMERZ"
+                      id="gateway-sslcommerz"
+                    />
                     <CreditCard className="h-5 w-5 text-primary" />
                     <div>
                       <p className="text-sm font-semibold">
@@ -151,7 +162,8 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
           {error && (
             <p className="text-xs font-medium text-destructive">
-              {error.message || "Failed to process enrollment. Please try again."}
+              {error.message ||
+                "Failed to process enrollment. Please try again."}
             </p>
           )}
         </div>

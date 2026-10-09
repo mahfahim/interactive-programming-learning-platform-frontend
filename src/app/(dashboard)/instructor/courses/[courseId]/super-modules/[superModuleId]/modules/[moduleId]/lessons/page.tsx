@@ -1,6 +1,6 @@
 // src/app/(dashboard)/admin/courses/[courseId]/super-modules/[superModuleId]/page.tsx
 
-import { ModuleList } from "@/components/modules/module/AdminModuleList";
+import { AdminModuleList } from "@/components/modules/module/AdminModuleList";
 
 interface PageProps {
   params: Promise<{
@@ -14,10 +14,9 @@ export default async function SuperModuleDetailsPage({ params }: PageProps) {
 
   return (
     <div className="container mx-auto py-6">
-      <ModuleList
+      <AdminModuleList
         superModuleId={superModuleId}
         courseId={courseId}
-        canManage={true}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
+import { Clock, PlayCircle } from "lucide-react";
 import React from "react";
-import { PlayCircle, Clock } from "lucide-react";
 
 interface VideoDataDetails {
   videoUrl?: string;
@@ -31,7 +31,9 @@ function getYouTubeEmbedUrl(url: string) {
 }
 
 export function VideoLesson({ videoData, title }: VideoLessonProps) {
-  const embedUrl = videoData?.videoUrl ? getYouTubeEmbedUrl(videoData.videoUrl) : null;
+  const embedUrl = videoData?.videoUrl
+    ? getYouTubeEmbedUrl(videoData.videoUrl)
+    : null;
 
   return (
     <div className="space-y-4">

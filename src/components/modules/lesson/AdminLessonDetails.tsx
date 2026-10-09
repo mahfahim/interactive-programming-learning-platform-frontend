@@ -1,29 +1,25 @@
 "use client";
 
-import React from "react";
 import {
   ArrowLeft,
+  BookOpen,
+  Calendar,
+  CheckCircle2,
   Clock,
+  Code,
+  Edit,
+  EyeOff,
+  FileCheck,
   HardDrive,
   HelpCircle,
   PlayCircle,
-  BookOpen,
-  FileCheck,
-  Calendar,
-  Code,
-  CheckCircle2,
-  EyeOff,
   Terminal,
-  Edit,
   Trash2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-
-import { useGetLessonById } from "@/hooks/lesson.hook";
-import { LessonType } from "@/types";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +30,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useGetLessonById } from "@/hooks/lesson.hook";
+import { LessonType } from "@/types";
 
 // 🟢 Helper: Extract YouTube Embed URL
 function getYouTubeEmbedUrl(url: string) {
@@ -134,7 +132,8 @@ export function AdminLessonDetails({ lessonId }: { lessonId: string }) {
           <CardHeader>
             <CardTitle className="text-destructive">Lesson Not Found</CardTitle>
             <CardDescription>
-              The requested lesson could not be located or may have been removed.
+              The requested lesson could not be located or may have been
+              removed.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -154,12 +153,19 @@ export function AdminLessonDetails({ lessonId }: { lessonId: string }) {
       }
     )?.sections?.[0]?.content || "No article content provided.";
 
-  const videoData = (lesson.video as unknown as { videoUrl?: string; durationSeconds?: number }) || null;
-  const assignmentData = (lesson.assignment as unknown as AssignmentDataDetails) || null;
+  const videoData =
+    (lesson.video as unknown as {
+      videoUrl?: string;
+      durationSeconds?: number;
+    }) || null;
+  const assignmentData =
+    (lesson.assignment as unknown as AssignmentDataDetails) || null;
   const codingData = (lesson.coding as unknown as CodingDataDetails) || null;
   const quizData = (lesson.quiz as unknown as QuizDataDetails) || null;
 
-  const embedUrl = videoData?.videoUrl ? getYouTubeEmbedUrl(videoData.videoUrl) : null;
+  const embedUrl = videoData?.videoUrl
+    ? getYouTubeEmbedUrl(videoData.videoUrl)
+    : null;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-12">
@@ -176,7 +182,10 @@ export function AdminLessonDetails({ lessonId }: { lessonId: string }) {
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <div>
-            <Badge variant="secondary" className="uppercase font-semibold text-[11px]">
+            <Badge
+              variant="secondary"
+              className="uppercase font-semibold text-[11px]"
+            >
               {lesson.lessonType}
             </Badge>
             <h1 className="text-2xl font-bold tracking-tight mt-1">
@@ -194,11 +203,7 @@ export function AdminLessonDetails({ lessonId }: { lessonId: string }) {
           >
             <Edit className="w-4 h-4 mr-1.5" /> Edit
           </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={handleDelete}
-          >
+          <Button variant="destructive" size="sm" onClick={handleDelete}>
             <Trash2 className="w-4 h-4 mr-1.5" /> Delete
           </Button>
         </div>
@@ -264,7 +269,11 @@ export function AdminLessonDetails({ lessonId }: { lessonId: string }) {
                         {children}
                       </a>
                     ),
-                    code: ({ className, children, ...props }: React.ComponentPropsWithoutRef<"code">) => {
+                    code: ({
+                      className,
+                      children,
+                      ...props
+                    }: React.ComponentPropsWithoutRef<"code">) => {
                       const match = /language-(\w+)/.exec(className || "");
                       return match ? (
                         <div className="my-4 rounded-lg overflow-hidden border border-slate-800 bg-slate-950">
@@ -355,7 +364,10 @@ export function AdminLessonDetails({ lessonId }: { lessonId: string }) {
                   </h3>
                 </div>
                 {assignmentData?.dueDate && (
-                  <Badge variant="outline" className="flex items-center gap-1.5 w-fit text-xs">
+                  <Badge
+                    variant="outline"
+                    className="flex items-center gap-1.5 w-fit text-xs"
+                  >
                     <Calendar className="w-3.5 h-3.5 text-primary" />
                     Due: {new Date(assignmentData.dueDate).toLocaleString()}
                   </Badge>
@@ -382,7 +394,8 @@ export function AdminLessonDetails({ lessonId }: { lessonId: string }) {
                       ),
                     }}
                   >
-                    {assignmentData?.instructions || "No instructions provided."}
+                    {assignmentData?.instructions ||
+                      "No instructions provided."}
                   </ReactMarkdown>
                 </div>
               </div>
@@ -395,14 +408,22 @@ export function AdminLessonDetails({ lessonId }: { lessonId: string }) {
               <div className="flex items-center justify-between border-b pb-4">
                 <div className="flex items-center gap-2">
                   <Code className="w-5 h-5 text-emerald-600" />
-                  <h3 className="text-lg font-semibold">Judge0 Coding Problem</h3>
+                  <h3 className="text-lg font-semibold">
+                    Judge0 Coding Problem
+                  </h3>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="flex items-center gap-1 text-xs">
+                  <Badge
+                    variant="secondary"
+                    className="flex items-center gap-1 text-xs"
+                  >
                     <Clock className="w-3.5 h-3.5" />
                     {codingData?.timeLimitMs ?? 1000} ms
                   </Badge>
-                  <Badge variant="secondary" className="flex items-center gap-1 text-xs">
+                  <Badge
+                    variant="secondary"
+                    className="flex items-center gap-1 text-xs"
+                  >
                     <HardDrive className="w-3.5 h-3.5" />
                     {codingData?.memoryLimitKb ?? 256000} KB
                   </Badge>
@@ -416,7 +437,8 @@ export function AdminLessonDetails({ lessonId }: { lessonId: string }) {
                 </h4>
                 <div className="p-4 bg-slate-950 text-slate-100 rounded-lg font-mono text-sm leading-relaxed border border-slate-800">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {codingData?.problemStatement || "No problem statement provided."}
+                    {codingData?.problemStatement ||
+                      "No problem statement provided."}
                   </ReactMarkdown>
                 </div>
               </div>
@@ -451,47 +473,56 @@ export function AdminLessonDetails({ lessonId }: { lessonId: string }) {
               {codingData?.testCases && codingData.testCases.length > 0 && (
                 <div className="space-y-3 pt-2">
                   <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                    <Terminal className="w-4 h-4" /> Test Cases ({codingData.testCases.length})
+                    <Terminal className="w-4 h-4" /> Test Cases (
+                    {codingData.testCases.length})
                   </h4>
                   <div className="space-y-3">
-                    {codingData.testCases.map((tc: CodingTestCaseDetails, tcIdx: number) => {
-                      const testCaseKey = tc.id || `tc-${tc.displayOrder ?? tcIdx + 1}-${tc.inputData?.slice(0, 10) || tcIdx}`;
-                      return (
-                        <div
-                          key={testCaseKey}
-                          className="border rounded-lg p-3 bg-card space-y-2 text-xs font-mono"
-                        >
-                          <div className="flex items-center justify-between border-b pb-2">
-                            <span className="font-semibold text-foreground">
-                              Test Case #{tc.displayOrder ?? tcIdx + 1}
-                            </span>
-                            {tc.isHidden && (
-                              <Badge variant="outline" className="text-[10px] text-amber-500 border-amber-500/30 flex items-center gap-1">
-                                <EyeOff className="w-3 h-3" /> Hidden Test Case
-                              </Badge>
-                            )}
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
-                            <div>
-                              <span className="text-[10px] text-muted-foreground uppercase block mb-1">
-                                Input Data:
+                    {codingData.testCases.map(
+                      (tc: CodingTestCaseDetails, tcIdx: number) => {
+                        const testCaseKey =
+                          tc.id ||
+                          `tc-${tc.displayOrder ?? tcIdx + 1}-${tc.inputData?.slice(0, 10) || tcIdx}`;
+                        return (
+                          <div
+                            key={testCaseKey}
+                            className="border rounded-lg p-3 bg-card space-y-2 text-xs font-mono"
+                          >
+                            <div className="flex items-center justify-between border-b pb-2">
+                              <span className="font-semibold text-foreground">
+                                Test Case #{tc.displayOrder ?? tcIdx + 1}
                               </span>
-                              <pre className="p-2 bg-muted/50 rounded border overflow-x-auto text-foreground">
-                                {tc.inputData || "(empty)"}
-                              </pre>
+                              {tc.isHidden && (
+                                <Badge
+                                  variant="outline"
+                                  className="text-[10px] text-amber-500 border-amber-500/30 flex items-center gap-1"
+                                >
+                                  <EyeOff className="w-3 h-3" /> Hidden Test
+                                  Case
+                                </Badge>
+                              )}
                             </div>
-                            <div>
-                              <span className="text-[10px] text-muted-foreground uppercase block mb-1">
-                                Expected Output:
-                              </span>
-                              <pre className="p-2 bg-muted/50 rounded border overflow-x-auto text-foreground">
-                                {tc.expectedOutput || "(empty)"}
-                              </pre>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                              <div>
+                                <span className="text-[10px] text-muted-foreground uppercase block mb-1">
+                                  Input Data:
+                                </span>
+                                <pre className="p-2 bg-muted/50 rounded border overflow-x-auto text-foreground">
+                                  {tc.inputData || "(empty)"}
+                                </pre>
+                              </div>
+                              <div>
+                                <span className="text-[10px] text-muted-foreground uppercase block mb-1">
+                                  Expected Output:
+                                </span>
+                                <pre className="p-2 bg-muted/50 rounded border overflow-x-auto text-foreground">
+                                  {tc.expectedOutput || "(empty)"}
+                                </pre>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      },
+                    )}
                   </div>
                 </div>
               )}
@@ -504,7 +535,9 @@ export function AdminLessonDetails({ lessonId }: { lessonId: string }) {
               <div className="flex items-center justify-between border-b pb-4">
                 <div className="flex items-center gap-2">
                   <HelpCircle className="w-5 h-5 text-emerald-600" />
-                  <h3 className="text-lg font-semibold">Quiz Overview (Instructor View)</h3>
+                  <h3 className="text-lg font-semibold">
+                    Quiz Overview (Instructor View)
+                  </h3>
                 </div>
                 <Badge variant="secondary">
                   Total Questions: {quizData?.questions?.length ?? 0}
@@ -513,46 +546,54 @@ export function AdminLessonDetails({ lessonId }: { lessonId: string }) {
 
               {quizData?.questions && quizData.questions.length > 0 ? (
                 <div className="space-y-6">
-                  {quizData.questions.map((q: QuizQuestionDetails, qIdx: number) => {
-                    const questionKey = q.id || `q-${q.displayOrder ?? qIdx + 1}-${q.questionText?.slice(0, 15) || qIdx}`;
-                    return (
-                      <div
-                        key={questionKey}
-                        className="border rounded-lg p-4 bg-card space-y-3 shadow-xs"
-                      >
-                        <div className="flex items-start gap-2">
-                          <span className="font-bold text-sm bg-muted px-2 py-0.5 rounded text-muted-foreground">
-                            Q{q.displayOrder ?? qIdx + 1}
-                          </span>
-                          <h4 className="font-medium text-sm md:text-base pt-0.5 text-foreground">
-                            {q.questionText}
-                          </h4>
-                        </div>
+                  {quizData.questions.map(
+                    (q: QuizQuestionDetails, qIdx: number) => {
+                      const questionKey =
+                        q.id ||
+                        `q-${q.displayOrder ?? qIdx + 1}-${q.questionText?.slice(0, 15) || qIdx}`;
+                      return (
+                        <div
+                          key={questionKey}
+                          className="border rounded-lg p-4 bg-card space-y-3 shadow-xs"
+                        >
+                          <div className="flex items-start gap-2">
+                            <span className="font-bold text-sm bg-muted px-2 py-0.5 rounded text-muted-foreground">
+                              Q{q.displayOrder ?? qIdx + 1}
+                            </span>
+                            <h4 className="font-medium text-sm md:text-base pt-0.5 text-foreground">
+                              {q.questionText}
+                            </h4>
+                          </div>
 
-                        {/* Options with Correct Indicators */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-7 pt-1">
-                          {q.options?.map((opt: QuizOptionDetails, oIdx: number) => {
-                            const optionKey = opt.id || `opt-${opt.displayOrder ?? oIdx + 1}-${opt.optionText?.slice(0, 15) || oIdx}`;
-                            return (
-                              <div
-                                key={optionKey}
-                                className={`flex items-center justify-between p-2.5 rounded-md border text-xs transition-colors ${
-                                  opt.isCorrect
-                                    ? "border-emerald-500 bg-emerald-500/10 font-medium text-emerald-700 dark:text-emerald-400"
-                                    : "bg-muted/30 text-muted-foreground"
-                                }`}
-                              >
-                                <span>{opt.optionText}</span>
-                                {opt.isCorrect && (
-                                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                                )}
-                              </div>
-                            );
-                          })}
+                          {/* Options with Correct Indicators */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-7 pt-1">
+                            {q.options?.map(
+                              (opt: QuizOptionDetails, oIdx: number) => {
+                                const optionKey =
+                                  opt.id ||
+                                  `opt-${opt.displayOrder ?? oIdx + 1}-${opt.optionText?.slice(0, 15) || oIdx}`;
+                                return (
+                                  <div
+                                    key={optionKey}
+                                    className={`flex items-center justify-between p-2.5 rounded-md border text-xs transition-colors ${
+                                      opt.isCorrect
+                                        ? "border-emerald-500 bg-emerald-500/10 font-medium text-emerald-700 dark:text-emerald-400"
+                                        : "bg-muted/30 text-muted-foreground"
+                                    }`}
+                                  >
+                                    <span>{opt.optionText}</span>
+                                    {opt.isCorrect && (
+                                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                                    )}
+                                  </div>
+                                );
+                              },
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    },
+                  )}
                 </div>
               ) : (
                 <div className="p-6 bg-muted/40 rounded-lg text-center border text-sm text-muted-foreground">

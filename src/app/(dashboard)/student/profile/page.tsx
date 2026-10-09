@@ -1,5 +1,5 @@
 // src/app/(dashboard)/student/profile/page.tsx
-import ProfileSettings from "@/components/modules/user/ProfileSettings"; 
+import ProfileSettings from "@/components/modules/user/ProfileSettings";
 
 export const metadata = {
   title: "Profile Settings | Student Dashboard",
