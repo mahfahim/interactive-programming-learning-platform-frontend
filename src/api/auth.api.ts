@@ -9,6 +9,10 @@ import type {
   IVerifyEmailPayload,
 } from "@/types";
 
+export interface IRefreshTokenPayload {
+  refreshToken?: string;
+}
+
 export function registerPatient(payload: IRegisterPayload) {
   return apiClient<ApiResponse>("/api/v1/auth/register", {
     method: "POST",
@@ -30,15 +34,17 @@ export function loginUser(payload: ILoginUserPayload) {
   });
 }
 
-export function logout() {
+export function logout(payload?: IRefreshTokenPayload) {
   return apiClient<ApiResponse>("/api/v1/auth/logout", {
     method: "POST",
+    body: payload,
   });
 }
 
-export function refreshToken() {
+export function refreshToken(payload?: IRefreshTokenPayload) {
   return apiClient<ApiResponse>("/api/v1/auth/refresh-token", {
     method: "POST",
+    body: payload,
   });
 }
 

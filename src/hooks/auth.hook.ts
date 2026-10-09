@@ -12,7 +12,8 @@ import {
   registerPatient,
   resetPassword,
   verifyPatientEmail,
-} from "@/api/auth.api"; // Adjust path to match your API directory
+  type IRefreshTokenPayload,
+} from "@/api/auth.api";
 import type {
   ApiResponse,
   IForgotPasswordPayload,
@@ -25,11 +26,9 @@ import type {
 
 import { useAuthStore } from "@/stores/auth.store";
 
-
 // Custom Hooks
 
-//  Register a new patient account.
-
+// Register a new patient account
 type UseRegisterPatientOptions = UseMutationOptions<
   ApiResponse,
   Error,
@@ -43,8 +42,7 @@ export function useRegisterPatient(options?: UseRegisterPatientOptions) {
   });
 }
 
-//  Verify patient email address using a verification token/OTP.
-
+// Verify patient email address using a verification token/OTP
 type UseVerifyPatientEmailOptions = UseMutationOptions<
   ApiResponse,
   Error,
@@ -58,8 +56,7 @@ export function useVerifyPatientEmail(options?: UseVerifyPatientEmailOptions) {
   });
 }
 
-//  Authenticate user with credentials.
-
+// Authenticate user with credentials
 type UseLoginUserOptions = UseMutationOptions<
   ApiResponse,
   Error,
@@ -79,38 +76,43 @@ export function useLoginUser(options?: UseLoginUserOptions) {
   });
 }
 
-//  Log out the current user session and clear React Query cache.
-
-type UseLogoutOptions = UseMutationOptions<ApiResponse, Error, void>;
+// Log out the current user session and clear React Query cache
+type UseLogoutOptions = UseMutationOptions<
+  ApiResponse,
+  Error,
+  IRefreshTokenPayload | void
+>;
 
 export function useLogout(options?: UseLogoutOptions) {
   const queryClient = useQueryClient();
   const { logout: clearAuthStore } = useAuthStore();
 
   return useMutation({
-    mutationFn: logout,
+    mutationFn: (payload?: IRefreshTokenPayload) => logout(payload),
     onSuccess: (...args) => {
-      clearAuthStore(); 
-      queryClient.clear(); 
+      clearAuthStore(); // Zustand Store ক্লিয়ার করবে
+      queryClient.clear(); // React Query Cache ক্লিয়ার করবে
       options?.onSuccess?.(...args);
     },
     ...options,
   });
 }
 
-//  Refresh current authentication access token.
-
-type UseRefreshTokenOptions = UseMutationOptions<ApiResponse, Error, void>;
+// Refresh current authentication access token
+type UseRefreshTokenOptions = UseMutationOptions<
+  ApiResponse,
+  Error,
+  IRefreshTokenPayload | void
+>;
 
 export function useRefreshToken(options?: UseRefreshTokenOptions) {
   return useMutation({
-    mutationFn: refreshToken,
+    mutationFn: (payload?: IRefreshTokenPayload) => refreshToken(payload),
     ...options,
   });
 }
 
-//  Authenticate user with Google OAuth credentials.
-
+// Authenticate user with Google OAuth credentials
 type UseGoogleLoginOptions = UseMutationOptions<
   ApiResponse,
   Error,
@@ -130,8 +132,7 @@ export function useGoogleLogin(options?: UseGoogleLoginOptions) {
   });
 }
 
-//  Request a password reset link/code via email.
-
+// Request a password reset link/code via email
 type UseForgotPasswordOptions = UseMutationOptions<
   ApiResponse,
   Error,
@@ -145,8 +146,7 @@ export function useForgotPassword(options?: UseForgotPasswordOptions) {
   });
 }
 
-//  Reset user password with token and new password.
-
+// Reset user password with token and new password
 type UseResetPasswordOptions = UseMutationOptions<
   ApiResponse,
   Error,
