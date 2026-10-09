@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
+import { Suspense } from "react";
 import "./globals.css";
 
 import AuthProvider from "@/providers/AuthProvider";
 import QueryProvider from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import GlobalSkeleton from "@/components/shared/GlobalSkeleton";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,7 +32,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+              <Suspense fallback={<GlobalSkeleton />}>
+                {children}
+              </Suspense>
+            </AuthProvider>
           </QueryProvider>
         </ThemeProvider>
 

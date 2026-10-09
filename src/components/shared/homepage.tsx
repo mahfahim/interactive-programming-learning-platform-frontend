@@ -12,6 +12,7 @@ import {
   Globe,
   GraduationCap,
   Laptop,
+  
   Play,
   Rocket,
   ShieldCheck,
@@ -26,7 +27,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Footer } from "@/components/shared/Footer";
-import { Navbar } from "@/components/shared/Navbar";
+import { HomeNavbar } from "@/components/shared/HomeNavbar";
 import { Button } from "@/components/ui/button";
 
 // --- Interactive Snippets for IDE Demo ---
@@ -301,8 +302,8 @@ export default function HomePage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground">
-      {/* Navbar */}
-      <Navbar />
+      {/* HomeNavbar */}
+      <HomeNavbar />
 
       <main className="flex-1">
         {/* ================= 1. HERO SECTION WITH AMBIENT GLOW & IDE DEMO ================= */}

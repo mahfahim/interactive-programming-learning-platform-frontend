@@ -27,21 +27,27 @@ export const ConfirmModal = ({
 }: ConfirmModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+      <DialogContent className="w-[92vw] max-w-md rounded-xl p-4 sm:p-6">
+        <DialogHeader className="text-left">
+          <DialogTitle className="text-lg sm:text-xl font-bold">{title}</DialogTitle>
+          <DialogDescription className="text-xs sm:text-sm mt-1.5">{description}</DialogDescription>
         </DialogHeader>
-        <DialogFooter className="gap-2 sm:gap-0">
-          <Button variant="outline" onClick={onClose} disabled={isLoading}>
+        <DialogFooter className="mt-4 flex flex-col-reverse sm:flex-row gap-2 sm:gap-0 sm:space-x-2">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            disabled={isLoading}
+            className="w-full sm:w-auto"
+          >
             Cancel
           </Button>
           <Button
             variant="destructive"
             onClick={onConfirm}
             disabled={isLoading}
+            className="w-full sm:w-auto"
           >
-            Confirm
+            {isLoading ? "Processing..." : "Confirm"}
           </Button>
         </DialogFooter>
       </DialogContent>

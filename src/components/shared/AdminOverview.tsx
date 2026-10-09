@@ -4,14 +4,14 @@ import { StatCard } from "@/components/shared/StatCard";
 
 export default function AdminOverview() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 lg:p-8">
       <PageHeader
         title="Admin Dashboard"
         description="Overview of system statistics and performance metrics."
       />
 
-      {/* Metrics Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Metrics Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         <StatCard
           title="Total Users"
           value="1,248"

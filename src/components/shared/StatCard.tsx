@@ -15,19 +15,19 @@ export function StatCard({
   icon: Icon,
 }: StatCardProps) {
   return (
-    <Card className="border-border">
-      <CardContent className="p-6 flex items-center justify-between">
+    <Card className="border-border shadow-xs">
+      <CardContent className="p-4 sm:p-6 flex items-center justify-between gap-3">
         <div className="space-y-1">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+          <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">
             {title}
           </p>
-          <p className="text-2xl font-bold">{value}</p>
+          <p className="text-xl sm:text-2xl font-bold">{value}</p>
           {description && (
-            <p className="text-xs text-muted-foreground">{description}</p>
+            <p className="text-[11px] sm:text-xs text-muted-foreground">{description}</p>
           )}
         </div>
-        <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-          <Icon className="h-6 w-6" />
+        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+          <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
         </div>
       </CardContent>
     </Card>

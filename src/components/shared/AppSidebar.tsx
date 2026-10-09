@@ -1,16 +1,26 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   BookOpen,
   CreditCard,
-  GraduationCap,
   LayoutDashboard,
   ScrollText,
-  Settings,
   Users,
 } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface AppSidebarProps {
   userRole?: "ADMIN" | "INSTRUCTOR" | "STUDENT";
@@ -22,53 +32,54 @@ export const AppSidebar = ({ userRole = "ADMIN" }: AppSidebarProps) => {
   const navItems =
     userRole === "ADMIN"
       ? [
-          {
-            href: "/admin/analytics",
-            label: "Analytics",
-            icon: LayoutDashboard,
-          },
-          { href: "/admin/users", label: "Users", icon: Users },
-          { href: "/admin/courses", label: "Courses", icon: BookOpen },
-          { href: "/admin/audit-logs", label: "Audit Logs", icon: ScrollText },
-          { href: "/admin/payments", label: "Payments", icon: CreditCard },
-        ]
+        { href: "/admin/analytics", label: "Analytics", icon: LayoutDashboard },
+        { href: "/admin/users", label: "Users", icon: Users },
+        { href: "/admin/courses", label: "Courses", icon: BookOpen },
+        { href: "/admin/audit-logs", label: "Audit Logs", icon: ScrollText },
+        { href: "/admin/payments", label: "Payments", icon: CreditCard },
+      ]
       : [
-          { href: "/instructor", label: "Overview", icon: LayoutDashboard },
-          { href: "/instructor/courses", label: "My Courses", icon: BookOpen },
-          {
-            href: "/instructor/students",
-            label: "Students",
-            icon: GraduationCap,
-          },
-          { href: "/instructor/settings", label: "Settings", icon: Settings },
-        ];
+        { href: "/instructor", label: "Overview", icon: LayoutDashboard },
+        { href: "/instructor/courses", label: "My Courses", icon: BookOpen },
+      ];
 
   return (
-    <aside className="w-64 border-r bg-card h-screen p-4 flex flex-col justify-between">
-      <div className="space-y-4">
-        <h2 className="text-lg font-bold tracking-tight px-3">Dashboard</h2>
-        <nav className="space-y-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href;
+    <TooltipProvider>
+      <Sidebar collapsible="icon">
+        <SidebarHeader className="p-3 sm:p-4">
+          <h2 className="text-base sm:text-lg font-bold tracking-tight group-data-[collapsible=icon]:hidden">
+            Dashboard
+          </h2>
+        </SidebarHeader>
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-accent"
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
-    </aside>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname === item.href;
+
+                  return (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive}
+                        tooltip={item.label}
+                      >
+                        <Link href={item.href} className="flex items-center gap-3">
+                          <Icon className="h-4 w-4 shrink-0" />
+                          <span className="truncate">{item.label}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+    </TooltipProvider>
   );
 };
