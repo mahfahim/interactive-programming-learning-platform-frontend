@@ -56,7 +56,9 @@ export const LoginForm: React.FC = () => {
 
         try {
           const decodedToken = decodeJwt(authData.accessToken);
-          setAuth(decodedToken, authData.accessToken);
+
+          // HttpOnly Cookie ব্যবহারের কারণে এখানে কেবল ১টি আর্গুমেন্ট যাবে
+          setAuth(decodedToken);
 
           setTimeout(() => {
             const userRole = decodedToken?.role || decodedToken?.userRole;

@@ -15,6 +15,16 @@ const nextConfig: NextConfig = {
     ],
   },
 
+  // Pure HttpOnly Cookie ফ্রন্টএন্ড দিয়ে ব্যাকএন্ডে পাঠানোর জন্য Proxy Rewrites
+  async rewrites() {
+    return [
+      {
+        source: "/api/v1/:path*",
+        destination: "https://code-bd-code-backend.vercel.app/api/v1/:path*",
+      },
+    ];
+  },
+
   async headers() {
     return [
       {
