@@ -1,7 +1,16 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
+import {
+  AlertCircle,
+  Eye,
+  EyeOff,
+  GraduationCap,
+  Loader2,
+  ShieldCheck,
+  Sparkles,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type React from "react";
@@ -26,6 +35,7 @@ export const LoginForm: React.FC = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<ILoginUserPayload>({
     resolver: zodResolver(authValidation.LoginZodSchema),
@@ -83,6 +93,14 @@ export const LoginForm: React.FC = () => {
   const onSubmit = (data: ILoginUserPayload) => {
     setApiError(null);
     loginMutation.mutate(data);
+  };
+
+  // Quick Demo Login Handler
+  const handleDemoLogin = (email: string, password: string) => {
+    setValue("email", email);
+    setValue("password", password);
+    setApiError(null);
+    loginMutation.mutate({ email, password });
   };
 
   return (
@@ -198,6 +216,61 @@ export const LoginForm: React.FC = () => {
           )}
         </Button>
       </form>
+
+      {/* Quick Demo Login Section */}
+      <div className="relative my-4">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-border" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-card px-2 text-muted-foreground font-medium flex items-center gap-1">
+            <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+            Quick Demo Login
+          </span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={loginMutation.isPending}
+          onClick={() => handleDemoLogin("mahfahim51@gmail.com", "@bcD1234")}
+          className="flex flex-col items-center justify-center h-auto py-2 px-1 text-xs font-medium gap-1"
+        >
+          <ShieldCheck className="h-4 w-4 text-red-500" />
+          <span>Admin</span>
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={loginMutation.isPending}
+          onClick={() =>
+            handleDemoLogin("fajannat90@gmail.com", "NewPassword123!")
+          }
+          className="flex flex-col items-center justify-center h-auto py-2 px-1 text-xs font-medium gap-1"
+        >
+          <GraduationCap className="h-4 w-4 text-blue-500" />
+          <span>Instructor</span>
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={loginMutation.isPending}
+          onClick={() =>
+            handleDemoLogin("mahf1919@gmail.com", "NewPassword123!")
+          }
+          className="flex flex-col items-center justify-center h-auto py-2 px-1 text-xs font-medium gap-1"
+        >
+          <User className="h-4 w-4 text-emerald-500" />
+          <span>Student</span>
+        </Button>
+      </div>
 
       <div className="relative my-4">
         <div className="absolute inset-0 flex items-center">

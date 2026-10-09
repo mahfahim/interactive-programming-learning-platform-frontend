@@ -23,6 +23,9 @@ import type {
   IVerifyEmailPayload,
 } from "@/types";
 
+import { useAuthStore } from "@/stores/auth.store";
+
+
 // Custom Hooks
 
 //  Register a new patient account.
@@ -82,11 +85,13 @@ type UseLogoutOptions = UseMutationOptions<ApiResponse, Error, void>;
 
 export function useLogout(options?: UseLogoutOptions) {
   const queryClient = useQueryClient();
+  const { logout: clearAuthStore } = useAuthStore();
 
   return useMutation({
     mutationFn: logout,
     onSuccess: (...args) => {
-      queryClient.clear();
+      clearAuthStore(); 
+      queryClient.clear(); 
       options?.onSuccess?.(...args);
     },
     ...options,

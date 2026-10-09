@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useRefreshToken } from "@/hooks/auth.hook";
 import { useAuthStore } from "@/stores/auth.store";
+import GlobalSkeleton from "@/components/shared/GlobalSkeleton";
 import type { ApiResponse, User } from "@/types";
 
 interface RefreshTokenResponse extends ApiResponse {
@@ -45,11 +46,7 @@ export default function AuthProvider({
   }, [refreshToken, setAuth, logout, setLoading]);
 
   if (isLoading) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-      </div>
-    );
+    return <GlobalSkeleton />;
   }
 
   return <>{children}</>;
