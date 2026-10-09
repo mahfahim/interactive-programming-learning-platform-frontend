@@ -1,4 +1,4 @@
-import { AdminSuperModuleList } from "@/components/modules/superModule/AdminSuperModuleList";
+import { ManageSuperModuleList } from "@/components/modules/superModule/ManageSuperModuleList";
 
 interface CourseDetailsPageProps {
   params: Promise<{ courseId: string }>;
@@ -21,8 +21,12 @@ export default async function AdminCourseDetailsPage({
         </p>
       </div>
 
-      {/* Admin/Instructor View with full CRUD access */}
-      <AdminSuperModuleList courseId={courseId} isAdmin={true} />
+      {/* Instructor View-এর জন্য isInstructor={true} পাঠানো হয়েছে */}
+      <ManageSuperModuleList
+        courseId={courseId}
+        isInstructor={true}
+        isAdmin={false}
+      />
     </div>
   );
 }

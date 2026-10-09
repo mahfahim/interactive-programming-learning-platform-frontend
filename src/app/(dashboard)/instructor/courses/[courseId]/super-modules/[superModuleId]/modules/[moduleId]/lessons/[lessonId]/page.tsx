@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { AdminLessonDetails } from "@/components/modules/lesson/AdminLessonDetails";
+import { AdminLessonDetails } from "@/components/modules/lesson/ManageLessonDetails";
 
 export default function AdminLessonDetailsPage() {
   const params = useParams();

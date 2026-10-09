@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Navbar } from "@/components/shared/Navbar";
+import { StudentNavbar } from "@/components/shared/StudentNavbar";
 
 interface StudentLayoutProps {
   children: ReactNode;
@@ -9,7 +9,7 @@ export default function StudentLayout({ children }: StudentLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/*  */}
-      <Navbar />
+      <StudentNavbar />
 
       {/* main contents */}
       <main className="flex-1 container mx-auto px-4 py-6 sm:px-6">

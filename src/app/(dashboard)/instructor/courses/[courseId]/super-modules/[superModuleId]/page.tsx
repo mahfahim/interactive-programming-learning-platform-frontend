@@ -1,20 +1,30 @@
-import { AdminModuleList } from "@/components/modules/module/AdminModuleList";
+import { ManageModuleList } from "@/components/modules/module/ManageModuleList";
 
 interface PageProps {
   params: Promise<{
     courseId: string;
     superModuleId: string;
   }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+  isInstructor?: boolean;
+  isAdmin?: boolean;
 }
 
 export default async function AdminSuperModuleDetailsPage({
   params,
+  isInstructor = true,
+  isAdmin = false,
 }: PageProps) {
   const { courseId, superModuleId } = await params;
 
   return (
     <div className="container mx-auto py-6">
-      <AdminModuleList superModuleId={superModuleId} courseId={courseId} />
+      <ManageModuleList
+        superModuleId={superModuleId}
+        courseId={courseId}
+        isInstructor={isInstructor}
+        isAdmin={isAdmin}
+      />
     </div>
   );
 }
