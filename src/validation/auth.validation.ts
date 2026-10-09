@@ -1,52 +1,49 @@
-// src/validation/auth.validation.ts
 import z from "zod";
 
 const UserRegistrationZodSchema = z.object({
   name: z
-    .string("Not A String!!!!!")
-    .min(3, "Name must atleast 3 characters long!!!")
-    .max(10),
-  email: z.email("Not email!!"),
+    .string()
+    .min(3, "Name must be at least 3 characters long.")
+    .max(20),
+  email: z.string().email("Invalid email address"),
   password: z
     .string()
-    .min(8, "Password Must Minimum 8 Characters Long.")
-    .regex(/[a-z]/, "Password must contain atleast 1 Lowercase Letter")
-    .regex(/[A-Z]/, "Password must contain atleast 1 Uppercase Letter")
-
-    .regex(/[0-9]/, "Password must contain atleast 1 Number")
-    .regex(/[^A-Za-z0-9]/, "Password must contain atleast 1 Special Character"),
+    .min(8, "Password must be minimum 8 characters long.")
+    .regex(/[a-z]/, "Password must contain at least 1 lowercase letter")
+    .regex(/[A-Z]/, "Password must contain at least 1 uppercase letter")
+    .regex(/[0-9]/, "Password must contain at least 1 number")
+    .regex(/[^A-Za-z0-9]/, "Password must contain at least 1 special character"),
 });
+
 const UserEmailVerifyZodSchema = z.object({
-  email: z.email("Not email!!"),
+  email: z.string().email("Invalid email address"),
   otp: z.string().length(6),
 });
 
 const LoginZodSchema = z.object({
-  email: z.email(),
+  email: z.string().email("Invalid email address"),
   password: z
     .string()
-    .min(8, "Password Must Minimum 8 Characters Long.")
-    .regex(/[a-z]/, "Password must contain atleast 1 Lowercase Letter")
-    .regex(/[A-Z]/, "Password must contain atleast 1 Uppercase Letter")
-
-    .regex(/[0-9]/, "Password must contain atleast 1 Number")
-    .regex(/[^A-Za-z0-9]/, "Password must contain atleast 1 Special Character"),
+    .min(8, "Password must be minimum 8 characters long.")
+    .regex(/[a-z]/, "Password must contain at least 1 lowercase letter")
+    .regex(/[A-Z]/, "Password must contain at least 1 uppercase letter")
+    .regex(/[0-9]/, "Password must contain at least 1 number")
+    .regex(/[^A-Za-z0-9]/, "Password must contain at least 1 special character"),
 });
 
 const ForgotPasswordZodSchema = z.object({
-  email: z.email(),
+  email: z.string().email("Invalid email address"),
 });
 
 const ResetPasswordZodSchema = z.object({
-  email: z.email(),
+  email: z.string().email("Invalid email address"),
   newPassword: z
     .string()
-    .min(8, "Password Must Minimum 8 Characters Long.")
-    .regex(/[a-z]/, "Password must contain atleast 1 Lowercase Letter")
-    .regex(/[A-Z]/, "Password must contain atleast 1 Uppercase Letter")
-
-    .regex(/[0-9]/, "Password must contain atleast 1 Number")
-    .regex(/[^A-Za-z0-9]/, "Password must contain atleast 1 Special Character"),
+    .min(8, "Password must be minimum 8 characters long.")
+    .regex(/[a-z]/, "Password must contain at least 1 lowercase letter")
+    .regex(/[A-Z]/, "Password must contain at least 1 uppercase letter")
+    .regex(/[0-9]/, "Password must contain at least 1 number")
+    .regex(/[^A-Za-z0-9]/, "Password must contain at least 1 special character"),
   otp: z.string().length(6),
 });
 
