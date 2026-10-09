@@ -6,8 +6,8 @@ import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useGoogleLogin } from "@/hooks/auth.hook";
-import { useAuthStore } from "@/stores/auth.store"; //  ১. Auth Store ইমপোর্ট করা হলো
-import { decodeJwt } from "@/utils/jwt.util"; //  ২. JWT Decoder ইমপোর্ট করা হলো
+import { useAuthStore } from "@/stores/auth.store";
+import { decodeJwt } from "@/utils/jwt.util";
 
 interface GoogleLoginButtonProps {
   onSuccessRedirect?: string;
@@ -19,7 +19,7 @@ export const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
   onError,
 }) => {
   const router = useRouter();
-  const setAuth = useAuthStore((state) => state.setAuth); //  ৩. setAuth ডিক্লেয়ার করা হলো
+  const setAuth = useAuthStore((state) => state.setAuth);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const googleButtonRef = useRef<HTMLDivElement>(null);
 
@@ -29,13 +29,14 @@ export const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
       const authData = res?.data as { accessToken?: string } | undefined;
 
       if (res?.success && authData?.accessToken) {
-        //  ৪. কুকি ও Zustand-এ টোকেন সেভ করা
         const decodedToken = decodeJwt(authData.accessToken);
-        setAuth(decodedToken, authData.accessToken);
+        
+        // Pure HttpOnly Cookie ব্যবহারের কারণে এখানে কেবল ১টি আর্গুমেন্ট যাবে
+        setAuth(decodedToken);
 
         const userRole = decodedToken?.role || decodedToken?.userRole;
 
-        // রোল অনুযায়ী রিডাইরেক্ট
+        // রোল অনুযায়ী রিডাইরেক্ট
         switch (userRole) {
           case "ADMIN":
           case "SUPER_ADMIN":
@@ -78,13 +79,11 @@ export const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
             callback: (response: { credential: string }) => {
               if (response.credential) {
                 setIsProcessing(true);
-                // 👈 ৫. এখানে { token: ... } পাঠানো হয়েছে (ব্যাকএন্ড জড স্কিমার সাথে মিল রেখে)
                 mutate({ idToken: response.credential });
               }
             },
           });
 
-          // Google-এর অফিশিয়াল পপআপ বাটন রেন্ডার করা
           // @ts-expect-error Google GIS renderButton
           window.google.accounts.id.renderButton(googleButtonRef.current, {
             type: "standard",
