@@ -10,14 +10,16 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLoginUser } from "@/hooks/auth.hook";
+import { useAuthStore } from "@/stores/auth.store";
 import type { ILoginUserPayload } from "@/types";
-
+import { decodeJwt } from "@/utils/jwt.util";
 import { authValidation } from "@/validation/auth.validation";
 import { AuthCard } from "./AuthCard";
 import { GoogleLoginButton } from "./GoogleLoginButton";
 
 export const LoginForm: React.FC = () => {
   const router = useRouter();
+  const setAuth = useAuthStore((state) => state.setAuth);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
@@ -35,9 +37,38 @@ export const LoginForm: React.FC = () => {
 
   const loginMutation = useLoginUser({
     onSuccess: (res) => {
-      if (res?.success) {
+      const authData = res?.data as
+        | { accessToken?: string; refreshToken?: string }
+        | undefined;
+
+      if (res?.success && authData?.accessToken) {
         setApiError(null);
-        router.push("/student");
+
+        try {
+          const decodedToken = decodeJwt(authData.accessToken);
+          setAuth(decodedToken, authData.accessToken);
+
+          setTimeout(() => {
+            const userRole = decodedToken?.role || decodedToken?.userRole;
+
+            switch (userRole) {
+              case "ADMIN":
+              case "SUPER_ADMIN":
+                router.push("/admin/analytics");
+                break;
+              case "INSTRUCTOR":
+              case "TEACHER":
+                router.push("/instructor");
+                break;
+              case "STUDENT":
+              default:
+                router.push("/student");
+                break;
+            }
+          }, 0);
+        } catch {
+          setApiError("Invalid authentication token received.");
+        }
       } else {
         setApiError(
           res?.message || "Login failed. Please check your credentials.",
