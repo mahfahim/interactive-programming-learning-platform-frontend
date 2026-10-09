@@ -31,7 +31,8 @@ export default function AuthProvider({
       onSuccess: (response) => {
         const authData = response as RefreshTokenResponse;
         if (authData?.data?.user) {
-          setAuth(authData.data.user, authData.data.accessToken);
+          // Pure HttpOnly Cookie ব্যবহারের কারণে এখানে কেবল user পাস করতে হবে
+          setAuth(authData.data.user);
         } else {
           logout();
         }
