@@ -88,7 +88,7 @@ export interface ICreateLessonInput {
 
 export interface IUpdateLessonInput {
   title?: string;
-  moduleId?: string; // 🟢 ADDED
+  moduleId?: string;
   displayOrder?: number;
   isPro?: boolean;
   isFree?: boolean;
@@ -104,7 +104,6 @@ export interface IUpdateLessonProgressInput {
   isCompleted: boolean;
 }
 
-
 export interface TLessonResponse {
   id: string;
   title: string;
@@ -112,12 +111,25 @@ export interface TLessonResponse {
   lessonType: LessonType;
   displayOrder: number;
   isPro: boolean;
+  isCompleted?: boolean;
+  isLocked?: boolean;
+  nextLessonId?: string | null;
   createdAt: string;
   updatedAt: string;
   module?: {
     id: string;
     title: string;
     superModuleId: string | null;
+    superModule?: {
+      id: string;
+      title: string;
+      courseId: string;
+      course?: {
+        id: string;
+        title: string;
+        price: number | string;
+      } | null;
+    } | null;
   } | null;
   article?: Record<string, unknown> | null;
   video?: Record<string, unknown> | null;

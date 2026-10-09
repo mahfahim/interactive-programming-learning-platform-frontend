@@ -6,7 +6,6 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import {
-  createQuiz,
   deleteQuiz,
   getAttemptById,
   getMyAttempts,
@@ -14,13 +13,10 @@ import {
   getQuizById,
   getQuizByLessonId,
   submitQuiz,
-  updateQuiz,
 } from "@/api/quiz.api";
 import type {
   ApiResponse,
-  ICreateQuizPayload,
   ISubmitQuizPayload,
-  IUpdateQuizPayload,
 } from "@/types";
 
 // Query Keys Factory
@@ -38,11 +34,7 @@ export const quizKeys = {
   quizAttempts: (id: string) => [...quizKeys.attempts(), "quiz", id] as const,
 };
 
-// Types
-type UpdateQuizVariables = {
-  id: string;
-  payload: IUpdateQuizPayload;
-};
+
 
 type UseGetQuizByLessonIdOptions = Omit<
   UseQueryOptions<ApiResponse>,
@@ -69,20 +61,14 @@ type UseGetQuizByIdOptions = Omit<
   "queryKey" | "queryFn"
 >;
 
-type UseCreateQuizOptions = Omit<
-  UseMutationOptions<ApiResponse, Error, ICreateQuizPayload>,
-  "mutationFn"
->;
+
 
 type UseSubmitQuizOptions = Omit<
   UseMutationOptions<ApiResponse, Error, ISubmitQuizPayload>,
   "mutationFn"
 >;
 
-type UseUpdateQuizOptions = Omit<
-  UseMutationOptions<ApiResponse, Error, UpdateQuizVariables>,
-  "mutationFn"
->;
+
 
 type UseDeleteQuizOptions = Omit<
   UseMutationOptions<ApiResponse, Error, string>,
@@ -155,20 +141,6 @@ export function useGetQuizById(id: string, options?: UseGetQuizByIdOptions) {
 
 // Hooks - Mutations
 
-// Create a new quiz
-export function useCreateQuiz(options?: UseCreateQuizOptions) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: createQuiz,
-    onSuccess: (...args) => {
-      queryClient.invalidateQueries({ queryKey: quizKeys.quizzes() });
-      options?.onSuccess?.(...args);
-    },
-    ...options,
-  });
-}
-
 // Submit quiz answers and process result
 export function useSubmitQuiz(options?: UseSubmitQuizOptions) {
   const queryClient = useQueryClient();
@@ -183,20 +155,7 @@ export function useSubmitQuiz(options?: UseSubmitQuizOptions) {
   });
 }
 
-// Update an existing quiz by ID
-export function useUpdateQuiz(options?: UseUpdateQuizOptions) {
-  const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: ({ id, payload }: UpdateQuizVariables) =>
-      updateQuiz(id, payload),
-    onSuccess: (...args) => {
-      queryClient.invalidateQueries({ queryKey: quizKeys.quizzes() });
-      options?.onSuccess?.(...args);
-    },
-    ...options,
-  });
-}
 
 // Delete a quiz by ID
 export function useDeleteQuiz(options?: UseDeleteQuizOptions) {

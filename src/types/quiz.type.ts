@@ -1,26 +1,4 @@
 // src/types/quiz.type.ts
-export interface IQuizOptionInput {
-  id?: string;
-  optionText: string;
-  isCorrect: boolean;
-  displayOrder: number;
-}
-
-export interface IQuizQuestionInput {
-  id?: string;
-  questionText: string;
-  displayOrder: number;
-  options: IQuizOptionInput[];
-}
-
-export interface ICreateQuizPayload {
-  lessonId: string;
-  questions: IQuizQuestionInput[];
-}
-
-export interface IUpdateQuizPayload {
-  questions: IQuizQuestionInput[];
-}
 
 export interface ISubmitQuizAnswer {
   questionId: string;

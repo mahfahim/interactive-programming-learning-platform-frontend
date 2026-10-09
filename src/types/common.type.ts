@@ -1,11 +1,4 @@
 // src/type/common.type.ts
-import type {
-  AuthProvider,
-  ProficiencyLevel,
-  Role,
-  SocialPlatform,
-  UserStatus,
-} from "./enum.type";
 
 export interface Meta {
   page: number;

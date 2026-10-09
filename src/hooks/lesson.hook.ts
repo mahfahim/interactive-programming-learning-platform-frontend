@@ -20,6 +20,7 @@ import type {
   IUpdateLessonProgressInput,
   TLessonResponse,
 } from "@/types";
+import { certificateKeys } from "./certificate.hook";
 import { moduleKeys } from "./module.hook";
 import { superModuleKeys } from "./superModule.hook";
 
@@ -93,7 +94,6 @@ export function useGetLessonById(
   });
 }
 
-//  ADDED: Hook for fetching lessons by Module ID
 export function useGetLessonsByModuleId(
   moduleId: string,
   options?: UseGetLessonsByModuleIdOptions,
@@ -115,7 +115,6 @@ export function useCreateLesson(options?: UseCreateLessonOptions) {
   return useMutation({
     mutationFn: (payload: ICreateLessonInput) => createLesson(payload),
     onSuccess: async (...args) => {
-      //  Sob query cache eksathe refetch & invalidate kora hocche
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: lessonKeys.all }),
         queryClient.invalidateQueries({ queryKey: moduleKeys.all }),
@@ -164,7 +163,7 @@ export function useDeleteLesson(options?: UseDeleteLessonOptions) {
   });
 }
 
-//  ADDED: Hook for updating lesson progress
+// Hook for updating lesson progress with Certificate auto-refetch
 export function useUpdateLessonProgress(
   options?: UseUpdateLessonProgressOptions,
 ) {
@@ -174,8 +173,11 @@ export function useUpdateLessonProgress(
   return useMutation({
     mutationFn: ({ id, payload }: UpdateProgressVariables) =>
       updateLessonProgress(id, payload),
-    onSuccess: (...args) => {
-      queryClient.invalidateQueries({ queryKey: lessonKeys.all });
+    onSuccess: async (...args) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: lessonKeys.all }),
+        queryClient.invalidateQueries({ queryKey: certificateKeys.all }),
+      ]);
       onSuccess?.(...args);
     },
     ...restOptions,
