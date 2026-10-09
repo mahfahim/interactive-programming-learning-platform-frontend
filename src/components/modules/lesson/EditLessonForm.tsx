@@ -2,7 +2,7 @@
 
 import { useForm } from "@tanstack/react-form";
 import { AlertCircle, ArrowLeft, Plus, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -49,6 +49,12 @@ export function EditLessonForm({
   moduleId,
 }: EditLessonFormProps) {
   const router = useRouter();
+  const pathname = usePathname();
+
+  // 🟢 Dynamic Redirection Base Path (Admin vs Instructor)
+  const isInstructor = pathname?.startsWith("/instructor");
+  const basePath = isInstructor ? "/instructor" : "/admin";
+
   const { mutate: updateLesson, isPending } = useUpdateLesson();
 
   // 🟢 Safe extraction of sub-properties from TLessonResponse
@@ -83,44 +89,23 @@ export function EditLessonForm({
     quizObj?.questions,
   )
     ? quizObj.questions.map(
-        (q: Record<string, unknown>, qIdx: number): QuizQuestionState => ({
-          id: generateId(),
-          questionText: (q.questionText as string) || "",
-          displayOrder: (q.displayOrder as number) ?? qIdx + 1,
-          options: Array.isArray(q.options)
-            ? (q.options as Array<Record<string, unknown>>).map(
-                (
-                  opt: Record<string, unknown>,
-                  oIdx: number,
-                ): QuizOptionState => ({
-                  id: generateId(),
-                  optionText: (opt.optionText as string) || "",
-                  isCorrect: Boolean(opt.isCorrect),
-                  displayOrder: (opt.displayOrder as number) ?? oIdx + 1,
-                }),
-              )
-            : [
-                {
-                  id: generateId(),
-                  optionText: "",
-                  isCorrect: true,
-                  displayOrder: 1,
-                },
-                {
-                  id: generateId(),
-                  optionText: "",
-                  isCorrect: false,
-                  displayOrder: 2,
-                },
-              ],
-        }),
-      )
-    : [
-        {
-          id: generateId(),
-          questionText: "",
-          displayOrder: 1,
-          options: [
+      (q: Record<string, unknown>, qIdx: number): QuizQuestionState => ({
+        id: generateId(),
+        questionText: (q.questionText as string) || "",
+        displayOrder: (q.displayOrder as number) ?? qIdx + 1,
+        options: Array.isArray(q.options)
+          ? (q.options as Array<Record<string, unknown>>).map(
+            (
+              opt: Record<string, unknown>,
+              oIdx: number,
+            ): QuizOptionState => ({
+              id: generateId(),
+              optionText: (opt.optionText as string) || "",
+              isCorrect: Boolean(opt.isCorrect),
+              displayOrder: (opt.displayOrder as number) ?? oIdx + 1,
+            }),
+          )
+          : [
             {
               id: generateId(),
               optionText: "",
@@ -134,8 +119,29 @@ export function EditLessonForm({
               displayOrder: 2,
             },
           ],
-        },
-      ];
+      }),
+    )
+    : [
+      {
+        id: generateId(),
+        questionText: "",
+        displayOrder: 1,
+        options: [
+          {
+            id: generateId(),
+            optionText: "",
+            isCorrect: true,
+            displayOrder: 1,
+          },
+          {
+            id: generateId(),
+            optionText: "",
+            isCorrect: false,
+            displayOrder: 2,
+          },
+        ],
+      },
+    ];
 
   // 🟢 Assignment Due Date safe formatting for <input type="datetime-local" />
   const initialDueDate = assignmentObj?.dueDate
@@ -156,30 +162,30 @@ export function EditLessonForm({
       articleData: lesson.article ? { content: articleContent } : undefined,
       videoData: videoObj
         ? {
-            videoUrl: videoObj.videoUrl || "",
-            durationSeconds: videoObj.durationSeconds || undefined,
-          }
+          videoUrl: videoObj.videoUrl || "",
+          durationSeconds: videoObj.durationSeconds || undefined,
+        }
         : undefined,
       assignmentData: assignmentObj
         ? {
-            title: assignmentObj.title || "",
-            instructions: assignmentObj.instructions || "",
-            dueDate: initialDueDate,
-          }
+          title: assignmentObj.title || "",
+          instructions: assignmentObj.instructions || "",
+          dueDate: initialDueDate,
+        }
         : undefined,
       codingData: codingObj
         ? {
-            problemStatement: codingObj.problemStatement || "",
-            inputFormat: codingObj.inputFormat || "",
-            outputFormat: codingObj.outputFormat || "",
-            timeLimitMs: codingObj.timeLimitMs || 1000,
-            memoryLimitKb: codingObj.memoryLimitKb || 256000,
-          }
+          problemStatement: codingObj.problemStatement || "",
+          inputFormat: codingObj.inputFormat || "",
+          outputFormat: codingObj.outputFormat || "",
+          timeLimitMs: codingObj.timeLimitMs || 1000,
+          memoryLimitKb: codingObj.memoryLimitKb || 256000,
+        }
         : undefined,
       quizData: lesson.quiz
         ? {
-            questions: initialQuestions,
-          }
+          questions: initialQuestions,
+        }
         : undefined,
     },
     onSubmit: async ({ value }) => {
@@ -254,8 +260,9 @@ export function EditLessonForm({
         { id: lesson.id, payload: parseResult.data as IUpdateLessonInput },
         {
           onSuccess: () => {
+            // 🟢 Dynamic Redirection Path
             router.push(
-              `/admin/courses/${courseId}/super-modules/${superModuleId}/modules/${moduleId}/lessons`,
+              `${basePath}/courses/${courseId}/super-modules/${superModuleId}/modules/${moduleId}/lessons`,
             );
             router.refresh();
           },
@@ -882,10 +889,22 @@ export function EditLessonForm({
                               />
                             </div>
 
-                            <div className="space-y-3">
-                              <Label className="text-xs font-semibold text-muted-foreground uppercase">
-                                Options (Check the box for correct answer)
-                              </Label>
+                            {/* Options List */}
+                            <div className="space-y-3 pt-2">
+                              <div className="flex items-center justify-between">
+                                <Label className="text-xs font-semibold uppercase text-muted-foreground">
+                                  Answer Options
+                                </Label>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleAddOption(qIndex)}
+                                  className="h-7 text-xs flex items-center gap-1 text-primary"
+                                >
+                                  <Plus className="w-3.5 h-3.5" /> Add Option
+                                </Button>
+                              </div>
 
                               <div className="space-y-2">
                                 {q.options?.map(
@@ -894,20 +913,18 @@ export function EditLessonForm({
                                       key={opt.id}
                                       className="flex items-center gap-2"
                                     >
-                                      <div className="flex items-center justify-center p-2 rounded border bg-muted/30">
-                                        <Checkbox
-                                          id={`opt-chk-${opt.id}`}
-                                          checked={opt.isCorrect}
-                                          onCheckedChange={() =>
-                                            handleToggleCorrectOption(
-                                              qIndex,
-                                              oIndex,
-                                            )
-                                          }
-                                        />
-                                      </div>
+                                      <Checkbox
+                                        checked={opt.isCorrect}
+                                        onCheckedChange={() =>
+                                          handleToggleCorrectOption(
+                                            qIndex,
+                                            oIndex,
+                                          )
+                                        }
+                                        id={`opt-${qIndex}-${oIndex}`}
+                                      />
                                       <Input
-                                        placeholder={`Option ${oIndex + 1}...`}
+                                        placeholder={`Option ${oIndex + 1}`}
                                         value={opt.optionText}
                                         onChange={(e) =>
                                           handleOptionTextChange(
@@ -916,39 +933,25 @@ export function EditLessonForm({
                                             e.target.value,
                                           )
                                         }
-                                        className={
-                                          opt.isCorrect
-                                            ? "border-emerald-500 bg-emerald-500/5 font-medium"
-                                            : ""
-                                        }
+                                        className="flex-1 text-sm"
                                       />
                                       {q.options.length > 1 && (
                                         <Button
                                           type="button"
                                           variant="ghost"
                                           size="icon"
-                                          className="h-9 w-9 text-muted-foreground hover:text-destructive"
+                                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
                                           onClick={() =>
                                             handleRemoveOption(qIndex, oIndex)
                                           }
                                         >
-                                          <Trash2 className="w-4 h-4" />
+                                          <Trash2 className="w-3.5 h-3.5" />
                                         </Button>
                                       )}
                                     </div>
                                   ),
                                 )}
                               </div>
-
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleAddOption(qIndex)}
-                                className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
-                              >
-                                <Plus className="w-3.5 h-3.5" /> Add Option
-                              </Button>
                             </div>
                           </CardContent>
                         </Card>

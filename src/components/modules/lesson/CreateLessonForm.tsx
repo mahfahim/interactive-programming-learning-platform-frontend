@@ -13,7 +13,7 @@ import {
   Trash2,
   Video,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -42,6 +42,12 @@ export function CreateLessonForm({
   moduleId,
 }: CreateLessonFormProps) {
   const router = useRouter();
+  const pathname = usePathname();
+
+  // 🟢 Dynamic Redirection Base Path (Admin vs Instructor)
+  const isInstructor = pathname?.startsWith("/instructor");
+  const basePath = isInstructor ? "/instructor" : "/admin";
+
   const queryClient = useQueryClient();
   const { mutate: createLesson, isPending } = useCreateLesson();
 
@@ -209,8 +215,9 @@ export function CreateLessonForm({
             queryClient.invalidateQueries({ queryKey: superModuleKeys.all }),
           ]);
 
+          // 🟢 Dynamic Redirection
           router.push(
-            `/admin/courses/${courseId}/super-modules/${superModuleId}/modules/${moduleId}/lessons`,
+            `${basePath}/courses/${courseId}/super-modules/${superModuleId}/modules/${moduleId}/lessons`,
           );
           router.refresh();
         },
@@ -380,11 +387,10 @@ export function CreateLessonForm({
                         setSelectedType(item.type);
                         form.setFieldValue("type", item.type);
                       }}
-                      className={`flex flex-col items-center justify-center p-4 rounded-lg border transition-all ${
-                        isSelected
+                      className={`flex flex-col items-center justify-center p-4 rounded-lg border transition-all ${isSelected
                           ? "border-emerald-500 bg-emerald-950/20 text-emerald-400 font-semibold"
                           : "border-border bg-card hover:bg-accent/50 text-muted-foreground"
-                      }`}
+                        }`}
                     >
                       <Icon className="w-5 h-5 mb-2" />
                       <span className="text-xs">{item.label}</span>
@@ -831,7 +837,8 @@ export function CreateLessonForm({
 
                   const handleAddOption = (qIndex: number) => {
                     const question = questions[qIndex];
-                    const nextOptionOrder = (question.options?.length || 0) + 1;
+                    const nextOptionOrder =
+                      (question.options?.length || 0) + 1;
                     const updatedOptions = [
                       ...(question.options || []),
                       {
@@ -892,11 +899,12 @@ export function CreateLessonForm({
                     oIndex: number,
                   ) => {
                     const question = questions[qIndex];
-                    const updatedOptions = question.options.map((opt, idx) => ({
-                      ...opt,
-                      isCorrect:
-                        idx === oIndex ? !opt.isCorrect : opt.isCorrect,
-                    }));
+                    const updatedOptions = question.options.map(
+                      (opt, idx) => ({
+                        ...opt,
+                        isCorrect: idx === oIndex ? !opt.isCorrect : opt.isCorrect,
+                      }),
+                    );
                     const updated = [...questions];
                     updated[qIndex] = { ...question, options: updatedOptions };
                     quizField.handleChange({ questions: updated });
@@ -906,7 +914,7 @@ export function CreateLessonForm({
                     <div className="space-y-6">
                       <div className="flex items-center justify-between">
                         <Label className="text-base font-semibold">
-                          Quiz Questions ({questions.length})
+                          Questions List ({questions.length})
                         </Label>
                         <Button
                           type="button"
@@ -936,8 +944,8 @@ export function CreateLessonForm({
                                 </span>
                                 {!hasCorrectOption && (
                                   <span className="text-xs text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded flex items-center gap-1">
-                                    <AlertCircle className="w-3 h-3" /> Select
-                                    at least 1 correct option
+                                    <AlertCircle className="w-3 h-3" /> Select at
+                                    least 1 correct option
                                   </span>
                                 )}
                               </div>
@@ -968,11 +976,21 @@ export function CreateLessonForm({
                                 />
                               </div>
 
-                              <div className="space-y-3">
+                              {/* Options List */}
+                              <div className="space-y-3 pt-2">
                                 <div className="flex items-center justify-between">
-                                  <Label className="text-xs font-semibold text-muted-foreground uppercase">
-                                    Options (Check the box for correct answer)
+                                  <Label className="text-xs font-semibold uppercase text-muted-foreground">
+                                    Answer Options
                                   </Label>
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleAddOption(qIndex)}
+                                    className="h-7 text-xs flex items-center gap-1 text-primary"
+                                  >
+                                    <Plus className="w-3.5 h-3.5" /> Add Option
+                                  </Button>
                                 </div>
 
                                 <div className="space-y-2">
@@ -981,20 +999,18 @@ export function CreateLessonForm({
                                       key={opt.id}
                                       className="flex items-center gap-2"
                                     >
-                                      <div className="flex items-center justify-center p-2 rounded border bg-muted/30">
-                                        <Checkbox
-                                          id={`opt-chk-${opt.id}`}
-                                          checked={opt.isCorrect}
-                                          onCheckedChange={() =>
-                                            handleToggleCorrectOption(
-                                              qIndex,
-                                              oIndex,
-                                            )
-                                          }
-                                        />
-                                      </div>
+                                      <Checkbox
+                                        checked={opt.isCorrect}
+                                        onCheckedChange={() =>
+                                          handleToggleCorrectOption(
+                                            qIndex,
+                                            oIndex,
+                                          )
+                                        }
+                                        id={`opt-${qIndex}-${oIndex}`}
+                                      />
                                       <Input
-                                        placeholder={`Option ${oIndex + 1}...`}
+                                        placeholder={`Option ${oIndex + 1}`}
                                         value={opt.optionText}
                                         onChange={(e) =>
                                           handleOptionTextChange(
@@ -1003,38 +1019,24 @@ export function CreateLessonForm({
                                             e.target.value,
                                           )
                                         }
-                                        className={
-                                          opt.isCorrect
-                                            ? "border-emerald-500 bg-emerald-500/5 font-medium"
-                                            : ""
-                                        }
+                                        className="flex-1 text-sm"
                                       />
                                       {q.options.length > 1 && (
                                         <Button
                                           type="button"
                                           variant="ghost"
                                           size="icon"
-                                          className="h-9 w-9 text-muted-foreground hover:text-destructive"
+                                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
                                           onClick={() =>
                                             handleRemoveOption(qIndex, oIndex)
                                           }
                                         >
-                                          <Trash2 className="w-4 h-4" />
+                                          <Trash2 className="w-3.5 h-3.5" />
                                         </Button>
                                       )}
                                     </div>
                                   ))}
                                 </div>
-
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleAddOption(qIndex)}
-                                  className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
-                                >
-                                  <Plus className="w-3.5 h-3.5" /> Add Option
-                                </Button>
                               </div>
                             </CardContent>
                           </Card>

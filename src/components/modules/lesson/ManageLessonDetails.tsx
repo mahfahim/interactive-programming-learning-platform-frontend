@@ -16,7 +16,7 @@ import {
   Terminal,
   Trash2,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -94,6 +94,12 @@ interface QuizDataDetails {
 
 export function AdminLessonDetails({ lessonId }: { lessonId: string }) {
   const router = useRouter();
+  const pathname = usePathname();
+
+  // 🟢 Role বা Current Route অনুযায়ী Base Path নির্ধারণ
+  const isInstructor = pathname?.startsWith("/instructor");
+  const basePath = isInstructor ? "/instructor" : "/admin";
+
   const { data: response, isLoading } = useGetLessonById(lessonId);
   const lesson = response?.data;
 
@@ -199,7 +205,7 @@ export function AdminLessonDetails({ lessonId }: { lessonId: string }) {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => router.push(`/admin/lessons/${lessonId}/edit`)}
+            onClick={() => router.push(`${basePath}/lessons/${lessonId}/edit`)}
           >
             <Edit className="w-4 h-4 mr-1.5" /> Edit
           </Button>
@@ -575,11 +581,10 @@ export function AdminLessonDetails({ lessonId }: { lessonId: string }) {
                                 return (
                                   <div
                                     key={optionKey}
-                                    className={`flex items-center justify-between p-2.5 rounded-md border text-xs transition-colors ${
-                                      opt.isCorrect
+                                    className={`flex items-center justify-between p-2.5 rounded-md border text-xs transition-colors ${opt.isCorrect
                                         ? "border-emerald-500 bg-emerald-500/10 font-medium text-emerald-700 dark:text-emerald-400"
                                         : "bg-muted/30 text-muted-foreground"
-                                    }`}
+                                      }`}
                                   >
                                     <span>{opt.optionText}</span>
                                     {opt.isCorrect && (
