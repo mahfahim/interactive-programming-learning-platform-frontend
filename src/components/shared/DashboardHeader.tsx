@@ -1,6 +1,7 @@
 "use client";
 
 import { Bell, LogOut, Settings, User } from "lucide-react";
+import { useRouter } from "next/navigation"; // ১. Redirect করার জন্য useRouter
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,12 +12,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useLogout } from "@/hooks/auth.hook";
 
 interface DashboardHeaderProps {
   userRole?: "ADMIN" | "INSTRUCTOR" | "STUDENT";
 }
 
 export function DashboardHeader({ userRole = "ADMIN" }: DashboardHeaderProps) {
+  const router = useRouter();
+
+  const { mutate: logout, isPending } = useLogout({
+    onSuccess: () => {
+      router.push("/login");
+    },
+  });
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b bg-background/95 px-6 backdrop-blur">
       {/* Left Side: Welcome Greeting / Title */}
@@ -68,9 +82,15 @@ export function DashboardHeader({ userRole = "ADMIN" }: DashboardHeaderProps) {
               <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive">
+
+            {/* */}
+            <DropdownMenuItem
+              className="cursor-pointer text-destructive focus:text-destructive"
+              onClick={handleLogout}
+              disabled={isPending}
+            >
               <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
+              <span>{isPending ? "Logging out..." : "Log out"}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

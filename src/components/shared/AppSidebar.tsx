@@ -2,8 +2,10 @@
 
 import {
   BookOpen,
+  CreditCard,
   GraduationCap,
   LayoutDashboard,
+  ScrollText,
   Settings,
   Users,
 } from "lucide-react";
@@ -20,10 +22,15 @@ export const AppSidebar = ({ userRole = "ADMIN" }: AppSidebarProps) => {
   const navItems =
     userRole === "ADMIN"
       ? [
-          { href: "/admin/analytics", label: "Analytics", icon: LayoutDashboard },
+          {
+            href: "/admin/analytics",
+            label: "Analytics",
+            icon: LayoutDashboard,
+          },
           { href: "/admin/users", label: "Users", icon: Users },
           { href: "/admin/courses", label: "Courses", icon: BookOpen },
-          { href: "/admin/audit-logs", label: "Audit Logs", icon: Settings },
+          { href: "/admin/audit-logs", label: "Audit Logs", icon: ScrollText },
+          { href: "/admin/payments", label: "Payments", icon: CreditCard },
         ]
       : [
           { href: "/instructor", label: "Overview", icon: LayoutDashboard },
@@ -33,7 +40,7 @@ export const AppSidebar = ({ userRole = "ADMIN" }: AppSidebarProps) => {
             label: "Students",
             icon: GraduationCap,
           },
-          { href: "/instructor/settings", label: "Settings", icon: Settings }, 
+          { href: "/instructor/settings", label: "Settings", icon: Settings },
         ];
 
   return (
