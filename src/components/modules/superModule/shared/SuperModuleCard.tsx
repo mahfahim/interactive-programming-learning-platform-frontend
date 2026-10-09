@@ -1,4 +1,3 @@
-// src/components/modules/superModule/shared/SuperModuleCard.tsx
 "use client";
 
 import { BookOpen, Edit, MoreVertical, Plus, Trash2 } from "lucide-react";
@@ -19,6 +18,7 @@ interface SuperModuleCardProps {
   superModule: ISuperModule;
   courseId?: string;
   isInstructor?: boolean;
+  isAdmin?: boolean;
   onEdit?: (superModule: ISuperModule) => void;
   onDelete?: (superModule: ISuperModule) => void;
   onAddModule?: (superModuleId: string) => void;
@@ -28,12 +28,17 @@ export function SuperModuleCard({
   superModule,
   courseId,
   isInstructor = false,
+  isAdmin = false,
   onEdit,
   onDelete,
   onAddModule,
 }: SuperModuleCardProps) {
   const moduleCount = superModule.modules?.length || 0;
   const activeCourseId = courseId || superModule.courseId;
+  const canManage = isInstructor || isAdmin;
+  
+  // Dynamic Route Prefix Logic
+  const basePath = isInstructor ? "/instructor" : "/admin";
 
   return (
     <Card className="group relative overflow-hidden border-border/70 bg-card transition-all hover:border-primary/40 hover:shadow-sm">
@@ -47,9 +52,8 @@ export function SuperModuleCard({
           </Badge>
 
           <div>
-            {/* Super Module Details Page-এ নেওয়ার লিঙ্ক */}
             <Link
-              href={`/admin/courses/${activeCourseId}/super-modules/${superModule.id}`}
+              href={`${basePath}/courses/${activeCourseId}/super-modules/${superModule.id}`}
             >
               <h3 className="text-base font-semibold leading-snug text-foreground group-hover:text-primary transition-colors hover:underline cursor-pointer">
                 {superModule.title}
@@ -63,7 +67,7 @@ export function SuperModuleCard({
           </div>
         </div>
 
-        {isInstructor && (
+        {canManage && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -112,7 +116,7 @@ export function SuperModuleCard({
       <CardContent className="pt-2">
         <div className="flex items-center justify-between border-t border-border/50 pt-3 text-xs text-muted-foreground">
           <Link
-            href={`/admin/courses/${activeCourseId}/super-modules/${superModule.id}`}
+            href={`${basePath}/courses/${activeCourseId}/super-modules/${superModule.id}`}
             className="flex items-center gap-1.5 font-medium hover:text-primary cursor-pointer"
           >
             <BookOpen className="h-3.5 w-3.5 text-primary" />
@@ -121,7 +125,7 @@ export function SuperModuleCard({
             </span>
           </Link>
 
-          {isInstructor && onAddModule && (
+          {canManage && onAddModule && (
             <Button
               variant="outline"
               size="sm"

@@ -16,11 +16,21 @@ import { SuperModuleSkeleton } from "./shared/SuperModuleSkeleton";
 interface SuperModuleDetailsProps {
   courseId: string;
   id: string;
+  isInstructor?: boolean;
+  isAdmin?: boolean;
 }
 
-export function SuperModuleDetails({ courseId, id }: SuperModuleDetailsProps) {
+export function SuperModuleDetails({
+  courseId,
+  id,
+  isInstructor = false,
+  isAdmin = false,
+}: SuperModuleDetailsProps) {
   const router = useRouter();
   const { data, isLoading, isError, refetch } = useGetSuperModuleById(id);
+
+  // Dynamic Route Prefix Logic
+  const basePath = isAdmin ? "/admin" : isInstructor ? "/instructor" : "/admin";
 
   if (isLoading) {
     return <SuperModuleSkeleton count={1} />;
@@ -45,7 +55,7 @@ export function SuperModuleDetails({ courseId, id }: SuperModuleDetailsProps) {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => router.push(`/admin/courses/${courseId}`)}
+          onClick={() => router.push(`${basePath}/courses/${courseId}`)}
           className="gap-2"
         >
           <ArrowLeft className="h-4 w-4" /> Back to Course
@@ -55,7 +65,7 @@ export function SuperModuleDetails({ courseId, id }: SuperModuleDetailsProps) {
           size="sm"
           onClick={() =>
             router.push(
-              `/admin/courses/${courseId}/super-modules/${id}/modules/create`,
+              `${basePath}/courses/${courseId}/super-modules/${id}/modules/create`,
             )
           }
           className="gap-2"
@@ -104,7 +114,7 @@ export function SuperModuleDetails({ courseId, id }: SuperModuleDetailsProps) {
               {modules.map((m) => (
                 <Link
                   key={m.id}
-                  href={`/admin/courses/${courseId}/super-modules/${id}/modules/${m.id}/lessons`}
+                  href={`${basePath}/courses/${courseId}/super-modules/${id}/modules/${m.id}/lessons`}
                   className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 p-3 hover:border-primary/50 hover:bg-muted/60 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50"
                 >
                   <div>

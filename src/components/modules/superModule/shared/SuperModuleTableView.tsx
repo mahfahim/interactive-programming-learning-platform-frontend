@@ -1,4 +1,3 @@
-// src/components/modules/superModule/shared/SuperModuleTableView.tsx
 "use client";
 
 import { BookOpen, Edit, Eye, FolderPlus, Trash2 } from "lucide-react";
@@ -19,6 +18,7 @@ interface SuperModuleTableViewProps {
   superModules: ISuperModule[];
   courseId: string;
   isInstructor?: boolean;
+  isAdmin?: boolean;
   onEdit?: (superModule: ISuperModule) => void;
   onDelete?: (superModule: ISuperModule) => void;
   onAddModule?: (superModuleId: string) => void;
@@ -28,10 +28,16 @@ export function SuperModuleTableView({
   superModules,
   courseId,
   isInstructor = false,
+  isAdmin = false,
   onEdit,
   onDelete,
   onAddModule,
 }: SuperModuleTableViewProps) {
+  const canManage = isInstructor || isAdmin;
+  
+  // Dynamic Route Prefix Logic
+  const basePath = isInstructor ? "/instructor" : "/admin";
+
   return (
     <div className="rounded-xl border border-border/70 bg-card overflow-hidden shadow-xs">
       <Table>
@@ -74,7 +80,7 @@ export function SuperModuleTableView({
                 <TableCell>
                   <div className="flex flex-col gap-0.5">
                     <Link
-                      href={`/admin/courses/${courseId}/super-modules/${sm.id}`}
+                      href={`${basePath}/courses/${courseId}/super-modules/${sm.id}`}
                       className="font-semibold text-sm text-foreground hover:text-primary transition-colors hover:underline"
                     >
                       {sm.title}
@@ -110,15 +116,14 @@ export function SuperModuleTableView({
                       title="View Details"
                     >
                       <Link
-                        href={`/admin/courses/${courseId}/super-modules/${sm.id}`}
+                        href={`${basePath}/courses/${courseId}/super-modules/${sm.id}`}
                       >
                         <Eye className="h-4 w-4" />
                       </Link>
                     </Button>
 
-                    {isInstructor && (
+                    {canManage && (
                       <>
-                        {/* Add Module inside this Super Module */}
                         {onAddModule && (
                           <Button
                             variant="ghost"
@@ -131,7 +136,6 @@ export function SuperModuleTableView({
                           </Button>
                         )}
 
-                        {/* Edit Super Module (Update) */}
                         {onEdit && (
                           <Button
                             variant="ghost"
@@ -144,7 +148,6 @@ export function SuperModuleTableView({
                           </Button>
                         )}
 
-                        {/* Delete Super Module (Delete) */}
                         {onDelete && (
                           <Button
                             variant="ghost"

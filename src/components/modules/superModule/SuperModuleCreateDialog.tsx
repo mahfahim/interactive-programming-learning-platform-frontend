@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { FolderPlus } from "lucide-react";
 import {
   Dialog,
@@ -16,6 +17,8 @@ interface SuperModuleCreateDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   courseId: string;
+  isInstructor?: boolean;
+  isAdmin?: boolean;
   onSuccess?: () => void;
 }
 
@@ -23,12 +26,25 @@ export function SuperModuleCreateDialog({
   open,
   onOpenChange,
   courseId,
+  isInstructor = false,
+  isAdmin = false,
   onSuccess,
 }: SuperModuleCreateDialogProps) {
+  const router = useRouter();
+
+  // Admin হলে /admin, Instructor হলে /instructor এবং ডিফল্ট হিসেবে /admin নির্ধারণ করা হলো
+  const basePath = isAdmin ? "/admin" : isInstructor ? "/instructor" : "/admin";
+
   const { mutate: createSuperModule, isPending } = useCreateSuperModule({
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       onOpenChange(false);
       onSuccess?.();
+
+      // তৈরি হওয়া Super Module-এর ID পাওয়া গেলে সেই পেইজে রিডাইরেক্ট করবে
+      const createdId = data?.data?.id || data?.id;
+      if (createdId) {
+        router.push(`${basePath}/courses/${courseId}/super-modules/${createdId}`);
+      }
     },
   });
 

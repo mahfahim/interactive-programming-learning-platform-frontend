@@ -14,7 +14,7 @@ import { SuperModuleSkeleton } from "./shared/SuperModuleSkeleton";
 import { SuperModuleStats } from "./shared/SuperModuleStats";
 import { SuperModuleTableView } from "./shared/SuperModuleTableView";
 
-interface AdminSuperModuleListProps {
+interface ManageSuperModuleListProps {
   courseId: string;
   isInstructor?: boolean;
   isAdmin?: boolean;
@@ -22,13 +22,17 @@ interface AdminSuperModuleListProps {
   onAddModuleClick?: (superModuleId: string) => void;
 }
 
-export function AdminSuperModuleList({
+export function ManageSuperModuleList({
   courseId,
   isInstructor = false,
   isAdmin = true,
   showStats = true,
   onAddModuleClick,
-}: AdminSuperModuleListProps) {
+}: ManageSuperModuleListProps) {
+  // isAdmin মিথ্যা হলে স্বয়ংক্রিয়ভাবে isInstructor সত্য ধরে নেওয়ার সেফগার্ড
+  const effectiveIsInstructor = isInstructor || !isAdmin;
+  const canManage = effectiveIsInstructor || isAdmin;
+
   const { data, isLoading, isError, refetch } =
     useGetSuperModulesByCourse(courseId);
 
@@ -41,8 +45,6 @@ export function AdminSuperModuleList({
     useState<ISuperModule | null>(null);
   const [deletingSuperModule, setDeletingSuperModule] =
     useState<ISuperModule | null>(null);
-
-  const canManage = isInstructor || isAdmin;
 
   const superModules: ISuperModule[] = useMemo(() => {
     if (!data?.data) return [];
@@ -91,7 +93,8 @@ export function AdminSuperModuleList({
             <SuperModuleCard
               key={sm.id}
               superModule={sm}
-              isInstructor={canManage}
+              isInstructor={effectiveIsInstructor}
+              isAdmin={isAdmin}
               onEdit={setEditingSuperModule}
               onDelete={setDeletingSuperModule}
               onAddModule={onAddModuleClick}
@@ -102,7 +105,8 @@ export function AdminSuperModuleList({
         <SuperModuleTableView
           superModules={filteredSuperModules}
           courseId={courseId}
-          isInstructor={canManage}
+          isInstructor={effectiveIsInstructor}
+          isAdmin={isAdmin}
           onEdit={setEditingSuperModule}
           onDelete={setDeletingSuperModule}
           onAddModule={onAddModuleClick}
@@ -115,6 +119,8 @@ export function AdminSuperModuleList({
             open={isCreateOpen}
             onOpenChange={setIsCreateOpen}
             courseId={courseId}
+            isInstructor={effectiveIsInstructor}
+            isAdmin={isAdmin}
           />
 
           <SuperModuleEditDialog
