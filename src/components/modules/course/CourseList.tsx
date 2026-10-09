@@ -42,7 +42,7 @@ export function CourseList({
     enabled: !isInstructor,
   });
 
-  const instructorQuery = useGetMyCourses({
+  const instructorQuery = useGetMyCourses(queryParams, {
     enabled: isInstructor,
   });
 
