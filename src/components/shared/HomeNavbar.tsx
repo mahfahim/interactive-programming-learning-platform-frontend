@@ -44,6 +44,7 @@ export const HomeNavbar = () => {
 
         {/* Mobile Menu Button */}
         <button
+          type="button" // <-- Add this explicit type
           className="md:hidden p-2 text-muted-foreground hover:text-foreground"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle menu"
@@ -71,14 +72,14 @@ export const HomeNavbar = () => {
               Courses
             </Link>
             <Link
-              href="/about"
+              href="/"
               onClick={() => setIsMobileMenuOpen(false)}
               className="p-2 hover:bg-muted rounded-md transition-colors"
             >
               About Us
             </Link>
             <Link
-              href="/contact"
+              href="/"
               onClick={() => setIsMobileMenuOpen(false)}
               className="p-2 hover:bg-muted rounded-md transition-colors"
             >
